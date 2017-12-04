@@ -12,6 +12,8 @@
 		EE2795471FD2493200F32A55 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE2795451FD2493200F32A55 /* Main.storyboard */; };
 		EE2795491FD2493200F32A55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE2795481FD2493200F32A55 /* Assets.xcassets */; };
 		EE27954C1FD2493200F32A55 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE27954A1FD2493200F32A55 /* LaunchScreen.storyboard */; };
+		EE2795541FD2CC1900F32A55 /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2795531FD2CC1900F32A55 /* SetGame.swift */; };
+		EE2795561FD2CC3A00F32A55 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2795551FD2CC3A00F32A55 /* Card.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		EE2795481FD2493200F32A55 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EE27954B1FD2493200F32A55 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EE27954D1FD2493200F32A55 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EE2795531FD2CC1900F32A55 /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
+		EE2795551FD2CC3A00F32A55 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,14 +58,24 @@
 		EE2795401FD2493200F32A55 /* Set */ = {
 			isa = PBXGroup;
 			children = (
-				EE2795411FD2493200F32A55 /* AppDelegate.swift */,
+				EECC119D1FD2E3AD0077BC50 /* SupportingFiles */,
 				EE2795431FD2493200F32A55 /* ViewController.swift */,
 				EE2795451FD2493200F32A55 /* Main.storyboard */,
-				EE2795481FD2493200F32A55 /* Assets.xcassets */,
-				EE27954A1FD2493200F32A55 /* LaunchScreen.storyboard */,
+				EE2795531FD2CC1900F32A55 /* SetGame.swift */,
+				EE2795551FD2CC3A00F32A55 /* Card.swift */,
 				EE27954D1FD2493200F32A55 /* Info.plist */,
 			);
 			path = Set;
+			sourceTree = "<group>";
+		};
+		EECC119D1FD2E3AD0077BC50 /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+				EE2795411FD2493200F32A55 /* AppDelegate.swift */,
+				EE2795481FD2493200F32A55 /* Assets.xcassets */,
+				EE27954A1FD2493200F32A55 /* LaunchScreen.storyboard */,
+			);
+			path = SupportingFiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,7 +151,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE2795441FD2493200F32A55 /* ViewController.swift in Sources */,
+				EE2795541FD2CC1900F32A55 /* SetGame.swift in Sources */,
 				EE2795421FD2493200F32A55 /* AppDelegate.swift in Sources */,
+				EE2795561FD2CC3A00F32A55 /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
