@@ -46,21 +46,24 @@ struct SetGame {
     }
     
     // Require: select card in the playing cards
-    mutating func selectCard(at index:Int) {
+    mutating func selectCard(at playingCardindex:Int) {
         if let matched = is3SelectedCardsMatched {
             // Three cards selected
             if matched {
                 for card in selectedCards {
                     playingCards.remove(at: playingCards.index(of: card)!)
+                    // TODO: deal cards
+                    deal3MoreCards()
                 }
                 deal3MoreCards()
             }
             selectedCards.removeAll()
         }
         
-        let selectCard = playingCards[index]
+        let selectCard = playingCards[playingCardindex]
         if selectedCards.contains(selectCard) {
-            selectedCards.remove(at: index)
+            selectedCards.remove(at: selectedCards.index(of: selectCard)!)
+//            selectedCards.remove(at: playingCardindex)
         } else {
             selectedCards.append(selectCard)
         }
