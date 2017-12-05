@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     var game = SetGame()
 
     @IBOutlet var cardButtons: [UIButton]!
+    @IBOutlet weak var dealButton: UIButton!
     
     @IBAction private func touchCard(_ sender: UIButton) {
         if let cardIndex = cardButtons.index(of: sender) {
@@ -21,6 +22,11 @@ class ViewController: UIViewController {
         } else {
             print("Error")
         }
+    }
+    
+    @IBAction func dealCards(_ sender: UIButton) {
+        game.deal3MoreCards()
+        updateViewFromModel()
     }
     
     override func viewDidLoad() {
@@ -35,38 +41,28 @@ class ViewController: UIViewController {
             
             if game.selectedCards.contains(card) { // highlight selected card
                 button.layer.borderWidth = 3.0
-                if let is3SelectedCardMatched = game.is3SelectedCardsMatched {
+                if let is3SelectedCardMatched = game.is3SelectedCardsMatched { // Already selected 3 cards
                     if is3SelectedCardMatched {
                         button.layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
+                        button.isEnabled = false
                     } else {
                         button.layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
                     }
                 } else {
                     button.layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
                 }
-            } else {
+            } else { // selected less than 3 cards
                 button.isEnabled = true
                 button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
                 button.layer.borderWidth = 0
             }
             button.setAttributedTitle(figure(for: card), for: UIControlState.normal)
-//            button.setTitle(figure(for: card), for: UIControlState.normal)
-            
-//            if let is3SelectedCardMatched = game.is3SelectedCardsMatched { // Already selected 3 cards
-//                if is3SelectedCardMatched {
-//                    if game.selectedCards.contains(card) {
-//                        button.isEnabled = false
-//                        button.layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
-//                    }
-//                } else {
-//                    if game.selectedCards.contains(card) {
-//                        button.layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
-//                    }
-//                }
-//            } else { // selected less than 3 cards
-//                button.isEnabled = true
-//                button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-//            }
+        }
+        
+        if game.playingCards.count >= cardButtons.count || game.deckOfCards.isEmpty { // No more room or deck out of cards
+            dealButton.isEnabled = false
+        } else {
+            dealButton.isEnabled = true
         }
     }
     

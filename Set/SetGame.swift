@@ -10,7 +10,7 @@ import Foundation
 
 struct SetGame {
     
-    // Invariant:
+    // Invariant: deckOfCards.count + playingCards.count + matchedCards.count = 81
     let initPlayingCardsCount = 12
     var deckOfCards = [Card]()
     var playingCards = [Card]()
@@ -51,9 +51,10 @@ struct SetGame {
             // Three cards selected
             if matched {
                 for card in selectedCards {
-                    playingCards.remove(at: playingCards.index(of: card)!)
-                    // TODO: deal cards
-                    deal3MoreCards()
+                    matchedCards.append(card)
+                    if !deckOfCards.isEmpty {
+                        playingCards.remove(at: playingCards.index(of: card)!)
+                    }
                 }
                 deal3MoreCards()
             }
@@ -63,7 +64,6 @@ struct SetGame {
         let selectCard = playingCards[playingCardindex]
         if selectedCards.contains(selectCard) {
             selectedCards.remove(at: selectedCards.index(of: selectCard)!)
-//            selectedCards.remove(at: playingCardindex)
         } else {
             selectedCards.append(selectCard)
         }
@@ -76,7 +76,11 @@ struct SetGame {
     }
     
     mutating func deal3MoreCards() {
-        
+        if !deckOfCards.isEmpty{
+            for _ in 0..<3 {
+                playingCards.append(deckOfCards.remove(at: deckOfCards.count.arc4random))
+            }
+        }
     }
     
     private mutating func setupDeckOfCards() {
