@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var dealButton: UIButton!
     
     @IBAction private func touchCard(_ sender: UIButton) {
-        if let cardIndex = cardButtons.index(of: sender) {
+        if let cardIndex = cardButtons.index(of: sender), cardIndex < game.playingCards.count {
             game.selectCard(at: cardIndex)
             updateViewFromModel()
         } else {
@@ -51,6 +51,9 @@ class ViewController: UIViewController {
                 } else {
                     button.layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
                 }
+            } else if game.matchedCards.contains(card) {
+                button.isEnabled = false
+                button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
             } else { // selected less than 3 cards
                 button.isEnabled = true
                 button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
