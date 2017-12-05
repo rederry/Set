@@ -53,7 +53,8 @@ class ViewController: UIViewController {
                 }
             } else if game.matchedCards.contains(card) {
                 button.isEnabled = false
-                button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+                button.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+                button.layer.borderWidth = 0
             } else { // selected less than 3 cards
                 button.isEnabled = true
                 button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)

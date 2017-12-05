@@ -48,8 +48,8 @@ struct SetGame {
     // Require: select card in the playing cards
     mutating func selectCard(at playingCardindex:Int) {
         if let matched = is3SelectedCardsMatched {
-            if matched { replaceSelectCardsWithNewCards() }
-            else { selectedCards.removeAll() }
+            if matched { replaceSelectPlayingCardsWithNewCards() }
+            selectedCards.removeAll()
         }
         
         let selectCard = playingCards[playingCardindex]
@@ -61,26 +61,27 @@ struct SetGame {
     }
     
     mutating func deal3MoreCards() {
-        if deckOfCards.count < 3 { return }
         if let matched = is3SelectedCardsMatched, matched {
-            replaceSelectCardsWithNewCards()
+            replaceSelectPlayingCardsWithNewCards()
+            selectedCards.removeAll();
         } else {
-            for _ in 0..<3 { playingCards.append(draw()!) }
+            for _ in 0..<3 { playingCards.append(draw()) }
         }
     }
     
-    mutating private func replaceSelectCardsWithNewCards() {
+    mutating private func replaceSelectPlayingCardsWithNewCards() {
         playingCards = playingCards.map {
             if selectedCards.contains($0) {
-                return draw()!
+                matchedCards.append($0)
+                return deckOfCards.count == 0 ? $0 : draw()
             } else {
                 return $0
             }
         }
-        selectedCards.removeAll()
     }
     
-    private mutating func draw() -> Card? {
+    // Require: !deckOfCards.isEmpty()
+    private mutating func draw() -> Card {
         return deckOfCards.remove(at: deckOfCards.count.arc4random)
     }
     
@@ -94,17 +95,16 @@ struct SetGame {
                 }
             }
         }
-//        for _ in 0..<69 {
+//        for _ in 0..<60 {
 //            deckOfCards.remove(at: 0)
 //        }
     }
     
     private mutating func setupPlayingCards() {
         for _ in 0..<initPlayingCardsCount {
-            playingCards.append(deckOfCards.remove(at: deckOfCards.count.arc4random))
+            playingCards.append(draw())
         }
     }
-    
 }
 
 extension Int {
