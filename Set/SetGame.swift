@@ -11,11 +11,12 @@ import Foundation
 struct SetGame {
     
     // Invariant: deckOfCards.count + playingCards.count + matchedCards.count = 81
-    let initPlayingCardsCount = 12
-    var deckOfCards = [Card]()
-    var playingCards = [Card]()
-    var selectedCards = [Card]()
-    var matchedCards = [Card]()
+    private let initPlayingCardsCount = 12
+    private(set) var score = 0
+    private(set) var deckOfCards = [Card]()
+    private(set) var playingCards = [Card]()
+    private(set) var selectedCards = [Card]()
+    private(set) var matchedCards = [Card]()
     var is3SelectedCardsMatched : Bool? {
         get {
             if selectedCards.count != 3 {
@@ -48,15 +49,19 @@ struct SetGame {
     // Require: select card in the playing cards
     mutating func selectCard(at playingCardindex:Int) {
         if let matched = is3SelectedCardsMatched {
-            if matched { replaceSelectPlayingCardsWithNewCards() }
+            if matched { replaceMatchedPlayingCardsWithNewCards() }
             selectedCards.removeAll()
         }
         
         let selectCard = playingCards[playingCardindex]
         if selectedCards.contains(selectCard) {
+            score -= 1
             selectedCards.remove(at: selectedCards.index(of: selectCard)!)
         } else {
             selectedCards.append(selectCard)
+        }
+        if let matched = is3SelectedCardsMatched {
+            score = matched ? score+3 : score-5
         }
     }
     
@@ -67,18 +72,19 @@ struct SetGame {
         matchedCards.removeAll()
         setupDeckOfCards()
         setupPlayingCards()
+        score = 0
     }
     
     mutating func deal3MoreCards() {
         if let matched = is3SelectedCardsMatched, matched {
-            replaceSelectPlayingCardsWithNewCards()
+            replaceMatchedPlayingCardsWithNewCards()
             selectedCards.removeAll();
         } else {
             for _ in 0..<3 { playingCards.append(draw()) }
         }
     }
     
-    mutating private func replaceSelectPlayingCardsWithNewCards() {
+    private mutating func replaceMatchedPlayingCardsWithNewCards() {
         playingCards = playingCards.map {
             if selectedCards.contains($0) {
                 matchedCards.append($0)

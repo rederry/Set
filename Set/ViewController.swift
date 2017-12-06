@@ -14,6 +14,7 @@ class ViewController: UIViewController {
 
     @IBOutlet private var cardButtons: [UIButton]!
     @IBOutlet private weak var dealButton: UIButton!
+    @IBOutlet private weak var scoreLabel: UILabel!
     
     @IBAction private func resetGame(_ sender: UIButton) {
         game.resetGame()
@@ -75,11 +76,12 @@ class ViewController: UIViewController {
             }
         }
         
-        if game.playingCards.count == cardButtons.count || game.deckOfCards.isEmpty { // No more room or deck out of cards
-            dealButton.isEnabled = false
-        } else {
-            dealButton.isEnabled = true
-        }
+        // Update Score Label
+        scoreLabel.text = "Score: \(game.score)"
+        
+        // No more room or deck out of cards
+        dealButton.isEnabled = !(game.playingCards.count == cardButtons.count || game.deckOfCards.isEmpty)
+        if let matched = game.is3SelectedCardsMatched, matched { dealButton.isEnabled = !game.deckOfCards.isEmpty}
     }
     
     private func figure(for card: Card) -> NSAttributedString {
