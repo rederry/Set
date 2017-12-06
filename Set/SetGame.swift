@@ -60,6 +60,15 @@ struct SetGame {
         }
     }
     
+    mutating func resetGame() {
+        deckOfCards.removeAll()
+        playingCards.removeAll()
+        selectedCards.removeAll()
+        matchedCards.removeAll()
+        setupDeckOfCards()
+        setupPlayingCards()
+    }
+    
     mutating func deal3MoreCards() {
         if let matched = is3SelectedCardsMatched, matched {
             replaceSelectPlayingCardsWithNewCards()
@@ -73,7 +82,7 @@ struct SetGame {
         playingCards = playingCards.map {
             if selectedCards.contains($0) {
                 matchedCards.append($0)
-                return deckOfCards.count == 0 ? $0 : draw()
+                return deckOfCards.isEmpty ? $0 : draw()
             } else {
                 return $0
             }
@@ -95,9 +104,9 @@ struct SetGame {
                 }
             }
         }
-//        for _ in 0..<60 {
-//            deckOfCards.remove(at: 0)
-//        }
+        for _ in 0..<54 {
+            deckOfCards.remove(at: 0)
+        }
     }
     
     private mutating func setupPlayingCards() {

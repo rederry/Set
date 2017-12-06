@@ -12,8 +12,13 @@ class ViewController: UIViewController {
     
     var game = SetGame()
 
-    @IBOutlet var cardButtons: [UIButton]!
-    @IBOutlet weak var dealButton: UIButton!
+    @IBOutlet private var cardButtons: [UIButton]!
+    @IBOutlet private weak var dealButton: UIButton!
+    
+    @IBAction private func resetGame(_ sender: UIButton) {
+        game.resetGame()
+        updateViewFromModel()
+    }
     
     @IBAction private func touchCard(_ sender: UIButton) {
         if let cardIndex = cardButtons.index(of: sender), cardIndex < game.playingCards.count {
@@ -35,35 +40,42 @@ class ViewController: UIViewController {
     }
     
     func updateViewFromModel() {
-        for index in 0..<game.playingCards.count {
+        for index in 0..<cardButtons.count {
             let button = cardButtons[index]
-            let card = game.playingCards[index]
-            
-            if game.selectedCards.contains(card) { // highlight selected card
-                button.layer.borderWidth = 3.0
-                if let is3SelectedCardMatched = game.is3SelectedCardsMatched { // Already selected 3 cards
-                    if is3SelectedCardMatched {
-                        button.layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
-                        button.isEnabled = false
+            if index < game.playingCards.count {
+                let card = game.playingCards[index]
+                if game.selectedCards.contains(card) { // highlight selected card
+                    button.layer.borderWidth = 3.0
+                    if let matched = game.is3SelectedCardsMatched { // Already selected 3 cards
+                        if matched {
+                            button.layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
+                            button.isEnabled = false
+                        } else {
+                            button.layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
+                        }
                     } else {
-                        button.layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
+                        button.layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
                     }
-                } else {
-                    button.layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
+                } else if game.matchedCards.contains(card) {
+                    button.isEnabled = false
+                    button.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+                    button.layer.borderWidth = 0
+                } else { // selected less than 3 cards
+                    button.isEnabled = true
+                    button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+                    button.layer.borderWidth = 0
                 }
-            } else if game.matchedCards.contains(card) {
+                button.setAttributedTitle(figure(for: card), for: UIControlState.normal)
+            } else {
                 button.isEnabled = false
-                button.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
+                button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
                 button.layer.borderWidth = 0
-            } else { // selected less than 3 cards
-                button.isEnabled = true
-                button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-                button.layer.borderWidth = 0
+                button.setTitle("", for: UIControlState.normal)
+                button.setAttributedTitle(NSAttributedString(), for: UIControlState.normal)
             }
-            button.setAttributedTitle(figure(for: card), for: UIControlState.normal)
         }
         
-        if game.playingCards.count >= cardButtons.count || game.deckOfCards.isEmpty { // No more room or deck out of cards
+        if game.playingCards.count == cardButtons.count || game.deckOfCards.isEmpty { // No more room or deck out of cards
             dealButton.isEnabled = false
         } else {
             dealButton.isEnabled = true
