@@ -12,10 +12,10 @@ struct SetGame {
     
     private let initPlayingCardsCount = 12
     private(set) var score = 0
-    private(set) var deckOfCards = [Card]()
-    private(set) var playingCards = [Card]()
-    private(set) var selectedCards = [Card]()
-    private(set) var matchedCards = [Card]()
+    private(set) var deckOfCards = [SetCard]()
+    private(set) var playingCards = [SetCard]()
+    private(set) var selectedCards = [SetCard]()
+    private(set) var matchedCards = [SetCard]()
     var is3SelectedCardsMatched : Bool? { // Is 3 selected cards matched or select less than 3 cards
         get {
             if selectedCards.count != 3 {
@@ -96,11 +96,11 @@ struct SetGame {
         return false
     }
     
-    private func matched(with cards:[Card]) -> Bool {
-        var countSet = Set<Card.CardCount>()
-        var colorSet = Set<Card.CardColor>()
-        var shapeSet = Set<Card.CardShape>()
-        var grainSet = Set<Card.CardGrain>()
+    private func matched(with cards:[SetCard]) -> Bool {
+        var countSet = Set<SetCard.CardCount>()
+        var colorSet = Set<SetCard.CardColor>()
+        var shapeSet = Set<SetCard.CardShape>()
+        var grainSet = Set<SetCard.CardGrain>()
         
         cards.forEach {
             countSet.insert($0.count)
@@ -116,16 +116,16 @@ struct SetGame {
     }
     
     // Require: !deckOfCards.isEmpty()
-    private mutating func draw() -> Card {
+    private mutating func draw() -> SetCard {
         return deckOfCards.remove(at: deckOfCards.count.arc4random)
     }
     
     private mutating func setupDeckOfCards() {
-        for count in Card.CardCount.allValues {
-            for color in Card.CardColor.allValues {
-                for shape in Card.CardShape.allValues {
-                    for grain in Card.CardGrain.allValues {
-                        deckOfCards.append(Card(count: count, color: color, shape: shape, grain: grain))
+        for count in SetCard.CardCount.allValues {
+            for color in SetCard.CardColor.allValues {
+                for shape in SetCard.CardShape.allValues {
+                    for grain in SetCard.CardGrain.allValues {
+                        deckOfCards.append(SetCard(count: count, color: color, shape: shape, grain: grain))
                     }
                 }
             }

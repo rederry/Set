@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Card: Equatable {
+struct SetCard: Equatable {
     
     let count: CardCount
     let color: CardColor
@@ -42,7 +42,7 @@ struct Card: Equatable {
         self.grain = grain
     }
     
-    static func ==(lhs: Card, rhs: Card) -> Bool {
+    static func ==(lhs: SetCard, rhs: SetCard) -> Bool {
         return lhs.count == rhs.count && lhs.color == rhs.color
             && lhs.shape == rhs.shape && lhs.grain == rhs.grain
     }

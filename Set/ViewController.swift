@@ -12,34 +12,35 @@ class ViewController: UIViewController {
     
     var game = SetGame()
 
-    @IBOutlet private var cardButtons: [UIButton]!
+//    @IBOutlet private var cardButtons: [UIButton]!
     @IBOutlet private weak var dealButton: UIButton!
     @IBOutlet private weak var scoreLabel: UILabel!
     
     @IBAction private func resetGame(_ sender: UIButton) {
         game.resetGame()
-        updateViewFromModel()
+//        updateViewFromModel()
     }
     
-    @IBAction private func touchCard(_ sender: UIButton) {
-        if let cardIndex = cardButtons.index(of: sender) {
-            game.selectCard(at: cardIndex)
-            updateViewFromModel()
-        } else {
-            print("Error")
-        }
-    }
+//    @IBAction private func touchCard(_ sender: UIButton) {
+//        if let cardIndex = cardButtons.index(of: sender) {
+//            game.selectCard(at: cardIndex)
+//            updateViewFromModel()
+//        } else {
+//            print("Error")
+//        }
+//    }
     
     @IBAction func dealCards(_ sender: UIButton) {
         game.deal3MoreCards()
-        updateViewFromModel()
+//        updateViewFromModel()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateViewFromModel()
+//        updateViewFromModel()
     }
     
+/**
     func updateViewFromModel() {
         for index in 0..<cardButtons.count {
             let button = cardButtons[index]
@@ -83,8 +84,9 @@ class ViewController: UIViewController {
         dealButton.isEnabled = !(game.playingCards.count == cardButtons.count || game.deckOfCards.isEmpty)
         if let matched = game.is3SelectedCardsMatched, matched { dealButton.isEnabled = !game.deckOfCards.isEmpty}
     }
+ **/
     
-    private func figure(for card: Card) -> NSAttributedString {
+    private func figure(for card: SetCard) -> NSAttributedString {
         
         var color: UIColor
         switch card.color {
