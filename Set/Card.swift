@@ -16,8 +16,8 @@ struct Card: Equatable {
     let grain: CardGrain
     
     enum CardCount: Int {
-        case countA=1, countB, countC
-        static let allValues = [countA, countB, countC]
+        case count1=1, count2, count3
+        static let allValues = [count1, count2, count3]
     }
     
     enum CardColor {

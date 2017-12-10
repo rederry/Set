@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction private func touchCard(_ sender: UIButton) {
-        if let cardIndex = cardButtons.index(of: sender), cardIndex < game.playingCards.count {
+        if let cardIndex = cardButtons.index(of: sender) {
             game.selectCard(at: cardIndex)
             updateViewFromModel()
         } else {
@@ -43,9 +43,9 @@ class ViewController: UIViewController {
     func updateViewFromModel() {
         for index in 0..<cardButtons.count {
             let button = cardButtons[index]
-            if index < game.playingCards.count {
+            if index < game.playingCards.count { // Update playing card buttons
                 let card = game.playingCards[index]
-                if game.selectedCards.contains(card) { // highlight selected card
+                if game.selectedCards.contains(card) { // highlight selected card button
                     button.layer.borderWidth = 3.0
                     if let matched = game.is3SelectedCardsMatched { // Already selected 3 cards
                         if matched {
@@ -54,25 +54,25 @@ class ViewController: UIViewController {
                         } else {
                             button.layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
                         }
-                    } else {
+                    } else { // Select less than 3 cards
                         button.layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
                     }
                 } else if game.matchedCards.contains(card) {
                     button.isEnabled = false
                     button.backgroundColor = #colorLiteral(red: 0.8039215803, green: 0.8039215803, blue: 0.8039215803, alpha: 1)
                     button.layer.borderWidth = 0
-                } else { // selected less than 3 cards
+                } else { // Deselect cards
                     button.isEnabled = true
                     button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
                     button.layer.borderWidth = 0
                 }
                 button.setAttributedTitle(figure(for: card), for: UIControlState.normal)
-            } else {
+            } else { // Update idle card buttons
                 button.isEnabled = false
                 button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
                 button.layer.borderWidth = 0
-                button.setTitle("", for: UIControlState.normal)
-                button.setAttributedTitle(NSAttributedString(), for: UIControlState.normal)
+                button.setTitle(nil, for: UIControlState.normal)
+                button.setAttributedTitle(nil, for: UIControlState.normal)
             }
         }
         
@@ -89,7 +89,7 @@ class ViewController: UIViewController {
         var color: UIColor
         switch card.color {
         case .colorA:
-            color = #colorLiteral(red: 1, green: 0.1857388616, blue: 0.5733950138, alpha: 1)
+            color = #colorLiteral(red: 1, green: 0, blue: 0, alpha: 1)
         case .colorB:
             color = #colorLiteral(red: 0.5563425422, green: 0.9793455005, blue: 0, alpha: 1)
         case .colorC:
@@ -107,11 +107,11 @@ class ViewController: UIViewController {
         }
         
         switch card.count {
-        case .countA:
+        case .count1:
             break
-        case .countB:
+        case .count2:
             contentStr += contentStr
-        case .countC:
+        case .count3:
             contentStr += contentStr + contentStr
         }
         
