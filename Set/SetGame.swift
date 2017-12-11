@@ -21,7 +21,7 @@ struct SetGame {
             if selectedCards.count != 3 {
                 return nil
             }
-            return matched(with: selectedCards)
+            return isMatched(with: selectedCards)
         }
     }
     
@@ -87,7 +87,7 @@ struct SetGame {
         for i in 0..<playingCards.count {
             for j in i+1..<playingCards.count {
                 for k in j+1..<playingCards.count {
-                    if matched(with: [playingCards[i], playingCards[j], playingCards[k]]) {
+                    if isMatched(with: [playingCards[i], playingCards[j], playingCards[k]]) {
                         return true
                     }
                 }
@@ -96,11 +96,11 @@ struct SetGame {
         return false
     }
     
-    private func matched(with cards:[SetCard]) -> Bool {
-        var countSet = Set<SetCard.CardCount>()
-        var colorSet = Set<SetCard.CardColor>()
-        var shapeSet = Set<SetCard.CardShape>()
-        var grainSet = Set<SetCard.CardGrain>()
+    private func isMatched(with cards:[SetCard]) -> Bool {
+        var countSet = Set<SetCard.Count>()
+        var colorSet = Set<SetCard.Color>()
+        var shapeSet = Set<SetCard.Shape>()
+        var grainSet = Set<SetCard.Grain>()
         
         cards.forEach {
             countSet.insert($0.count)
@@ -121,10 +121,10 @@ struct SetGame {
     }
     
     private mutating func setupDeckOfCards() {
-        for count in SetCard.CardCount.allValues {
-            for color in SetCard.CardColor.allValues {
-                for shape in SetCard.CardShape.allValues {
-                    for grain in SetCard.CardGrain.allValues {
+        for count in SetCard.Count.allValues {
+            for color in SetCard.Color.allValues {
+                for shape in SetCard.Shape.allValues {
+                    for grain in SetCard.Grain.allValues {
                         deckOfCards.append(SetCard(count: count, color: color, shape: shape, grain: grain))
                     }
                 }
