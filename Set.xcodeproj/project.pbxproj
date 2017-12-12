@@ -16,6 +16,7 @@
 		EE2795561FD2CC3A00F32A55 /* SetCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2795551FD2CC3A00F32A55 /* SetCard.swift */; };
 		EEBC8C3E1FDCD30900B0C5DA /* SetBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC8C3D1FDCD30900B0C5DA /* SetBoardView.swift */; };
 		EEBC8C401FDD20DF00B0C5DA /* SetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC8C3F1FDD20DF00B0C5DA /* SetCardView.swift */; };
+		EEBC8C441FDE883D00B0C5DA /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC8C431FDE883D00B0C5DA /* Grid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		EE2795551FD2CC3A00F32A55 /* SetCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCard.swift; sourceTree = "<group>"; };
 		EEBC8C3D1FDCD30900B0C5DA /* SetBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetBoardView.swift; sourceTree = "<group>"; };
 		EEBC8C3F1FDD20DF00B0C5DA /* SetCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCardView.swift; sourceTree = "<group>"; };
+		EEBC8C431FDE883D00B0C5DA /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				EE2795551FD2CC3A00F32A55 /* SetCard.swift */,
 				EEBC8C3D1FDCD30900B0C5DA /* SetBoardView.swift */,
 				EEBC8C3F1FDD20DF00B0C5DA /* SetCardView.swift */,
+				EEBC8C431FDE883D00B0C5DA /* Grid.swift */,
 				EE27954D1FD2493200F32A55 /* Info.plist */,
 			);
 			path = Set;
@@ -161,6 +164,7 @@
 				EEBC8C3E1FDCD30900B0C5DA /* SetBoardView.swift in Sources */,
 				EE2795541FD2CC1900F32A55 /* SetGame.swift in Sources */,
 				EE2795421FD2493200F32A55 /* AppDelegate.swift in Sources */,
+				EEBC8C441FDE883D00B0C5DA /* Grid.swift in Sources */,
 				EE2795561FD2CC3A00F32A55 /* SetCard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
