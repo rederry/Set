@@ -10,27 +10,11 @@ import UIKit
 
 class SetBoardView: UIView {
 
-    var setCardViews = [SetCardView]() { didSet { setNeedsDisplay(); setNeedsLayout() } }
-    let defaultCardCount = 12
-    
-    private func setupCards() {
-        for _ in 0..<defaultCardCount {
-            let setCardView = SetCardView()
-            setCardView.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
-            setCardView.isOpaque = true
-            setCardViews.append(setCardView)
-            addSubview(setCardView)
+    var cardViews = [SetCardView]() {
+        willSet {
+            cardViews.forEach{$0.removeFromSuperview()}
+            newValue.forEach{addSubview($0)}
         }
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupCards()
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setupCards()
     }
     
     override func layoutSubviews() {
@@ -40,13 +24,13 @@ class SetBoardView: UIView {
     
     private func layoutSetCards() {
         var grid = Grid(layout: .aspectRatio(0.7), frame: bounds)
-        grid.cellCount = setCardViews.count
+        grid.cellCount = cardViews.count
         let cellPadding: CGFloat = 5
         for index in 0..<grid.cellCount {
             if let frame = grid[index] {
                 let cardFrame = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width - cellPadding,
                                        height: frame.height - cellPadding)
-                let setCardView = setCardViews[index]
+                let setCardView = cardViews[index]
                 setCardView.frame = cardFrame
             }
         }

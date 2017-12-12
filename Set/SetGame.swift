@@ -10,6 +10,7 @@ import Foundation
 
 struct SetGame {
     
+    // Invariant: deckOfCards.count + playingCards.count + matchedCards.count = 81
     private let initPlayingCardsCount = 12
     private(set) var score = 0
     private(set) var deckOfCards = [SetCard]()
@@ -33,7 +34,7 @@ struct SetGame {
     // Require: select card in the playing cards
     mutating func selectCard(at playingCardindex:Int) {
         if let matched = is3SelectedCardsMatched { // Replace 3 selected cards
-            if matched { replaceMatchedPlayingCardsWithNewCards() }
+            if matched { replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove() }
             selectedCards.removeAll()
         }
         
@@ -62,7 +63,7 @@ struct SetGame {
     // MARK: Extra Credit
     mutating func deal3MoreCards() {
         if let matched = is3SelectedCardsMatched, matched {
-            replaceMatchedPlayingCardsWithNewCards()
+            replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove()
             selectedCards.removeAll();
         } else {
             if existASetInPlayingCards() {
@@ -72,13 +73,20 @@ struct SetGame {
         }
     }
     
-    private mutating func replaceMatchedPlayingCardsWithNewCards() {
-        playingCards = playingCards.map {
-            if selectedCards.contains($0) {
-                matchedCards.append($0)
-                return deckOfCards.isEmpty ? $0 : draw()
-            } else {
-                return $0
+    private mutating func replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove() {
+        if deckOfCards.isEmpty {
+            for card in selectedCards {
+                playingCards.remove(at: playingCards.index(of: card)!)
+                matchedCards.append(card)
+            }
+        } else {
+            playingCards = playingCards.map {
+                if selectedCards.contains($0) {
+                    matchedCards.append($0)
+                    return draw()
+                } else {
+                    return $0
+                }
             }
         }
     }

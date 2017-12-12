@@ -6,7 +6,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -60,25 +59,7 @@
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NC0-CP-Bw6" customClass="SetBoardView" customModule="Set" customModuleProvider="target">
                                 <rect key="frame" x="16" y="90.333333333333314" width="343" height="610.66666666666674"/>
-                                <subviews>
-                                    <view hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mmc-rj-D2F" customClass="SetCardView" customModule="Set" customModuleProvider="target">
-                                        <rect key="frame" x="1" y="21.333333333333371" width="342" height="569"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" priority="750" constant="800" id="9jh-eQ-MUD"/>
-                                            <constraint firstAttribute="width" secondItem="Mmc-rj-D2F" secondAttribute="height" multiplier="6:10" id="Zv3-UU-Lbs"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Mmc-rj-D2F" secondAttribute="bottom" id="8oY-3F-fCQ"/>
-                                    <constraint firstItem="Mmc-rj-D2F" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="NC0-CP-Bw6" secondAttribute="leading" id="ZIw-NP-htg"/>
-                                    <constraint firstItem="Mmc-rj-D2F" firstAttribute="centerY" secondItem="NC0-CP-Bw6" secondAttribute="centerY" id="aLU-Tp-0Gx"/>
-                                    <constraint firstItem="Mmc-rj-D2F" firstAttribute="centerX" secondItem="NC0-CP-Bw6" secondAttribute="centerX" id="e8v-h4-iYg"/>
-                                    <constraint firstItem="Mmc-rj-D2F" firstAttribute="top" relation="greaterThanOrEqual" secondItem="NC0-CP-Bw6" secondAttribute="top" id="oBU-kE-1kH"/>
-                                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Mmc-rj-D2F" secondAttribute="trailing" id="rmn-Da-b54"/>
-                                </constraints>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.46202266219999999" green="0.83828371759999998" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -99,6 +80,7 @@
                     <connections>
                         <outlet property="dealButton" destination="73l-0i-xPU" id="GjC-f0-P9b"/>
                         <outlet property="scoreLabel" destination="Hcm-AN-xS1" id="kev-Nv-j4D"/>
+                        <outlet property="setBoardView" destination="NC0-CP-Bw6" id="MmN-kS-c7z"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

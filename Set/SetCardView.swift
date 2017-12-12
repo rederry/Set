@@ -11,10 +11,14 @@ import UIKit
 //@IBDesignable
 class SetCardView: UIView {
     
-    let count: Int = 3.arc4random + 1
-    let color: UIColor = 2.arc4random == 0 ? #colorLiteral(red: 0.07843137255, green: 0.6078431373, blue: 0.2666666667, alpha: 1) : #colorLiteral(red: 0.8196078431, green: 0.1411764706, blue: 0.1960784314, alpha: 1)
-    let shape: Shape = 2.arc4random == 0 ? Shape.oval : Shape.squiggle
-    let grain: Grain = 2.arc4random == 0 ? Grain.solid : Grain.striped
+    private var count: Int = 1
+    private var color: UIColor = #colorLiteral(red: 0.8196078431, green: 0.1411764706, blue: 0.1960784314, alpha: 1)
+    private var shape: Shape = .diamond
+    private var grain: Grain = .solid
+    
+    var isSelected = false
+    var isMatched: Bool?
+    
     
     enum Shape {
         case diamond, oval, squiggle
@@ -26,6 +30,29 @@ class SetCardView: UIView {
         static let allValues = [solid, striped, outlined]
     }
     
+    convenience init(with count: Int, _ color: UIColor, _ shape: Shape, _ grain: Grain) {
+        self.init(frame: CGRect.zero)
+        self.count = count
+        self.color = color
+        self.shape = shape
+        self.grain = grain
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    private func setup() {
+        backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
+        isOpaque = false
+    }
+    
     override func draw(_ rect: CGRect) {
         drawRoundConer(rect)
         switch shape {
@@ -35,6 +62,23 @@ class SetCardView: UIView {
             drawOval()
         case .squiggle:
             drawSquiggle()
+        }
+        drawStateBorder()
+    }
+    
+    private func drawStateBorder() {
+        layer.cornerRadius = cornerRadius
+        layer.borderWidth = patternLineWidth*2
+        layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
+        if let matched = isMatched {
+            if matched {
+                layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
+                isUserInteractionEnabled = false
+            } else {
+                layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
+            }
+        } else if isSelected {
+            layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
         }
     }
     
