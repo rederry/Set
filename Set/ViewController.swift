@@ -32,6 +32,11 @@ class ViewController: UIViewController {
         updateViewFromModel()
     }
     
+    @IBAction func cheat(_ sender: UIButton) {
+        game.cheat()
+        updateViewFromModel()
+    }
+    
     @IBAction func touchDealCardsButton(_ sender: UIButton) {
         dealCards()
     }

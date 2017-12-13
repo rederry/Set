@@ -17,6 +17,7 @@ struct SetGame {
     private(set) var playingCards = [SetCard]()
     private(set) var selectedCards = [SetCard]()
     private(set) var matchedCards = [SetCard]()
+    private var aSetOfCards = [SetCard]()
     var is3SelectedCardsMatched : Bool? { // Is 3 selected cards matched or select less than 3 cards
         get {
             if selectedCards.count != 3 {
@@ -25,6 +26,7 @@ struct SetGame {
             return isMatched(with: selectedCards)
         }
     }
+        
     
     init() {
         setupDeckOfCards()
@@ -40,6 +42,10 @@ struct SetGame {
         if let matched = is3SelectedCardsMatched { // Replace 3 selected cards
             if matched { replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove() }
             selectedCards.removeAll()
+            
+//            Timer.scheduledTimer(withTimeInterval: TimeInterval(30 + 60.arc4random), repeats: false, block: { (timer) in
+//                
+//            })
         }
         
 
@@ -61,6 +67,13 @@ struct SetGame {
         }
     }
     
+    mutating func cheat() {
+        if existASetInPlayingCards() {
+            selectedCards.removeAll()
+            aSetOfCards.forEach { selectedCards.append($0) }
+        }
+    }
+    
     mutating func resetGame() {
         deckOfCards.removeAll()
         playingCards.removeAll()
@@ -71,7 +84,6 @@ struct SetGame {
         score = 0
     }
     
-    // MARK: Extra Credit
     mutating func deal3MoreCards() {
         if let matched = is3SelectedCardsMatched, matched {
             replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove()
@@ -102,11 +114,14 @@ struct SetGame {
         }
     }
     
-    private func existASetInPlayingCards() -> Bool {
+    // MARK: Extra Credit
+    private mutating func existASetInPlayingCards() -> Bool {
         for i in 0..<playingCards.count {
             for j in i+1..<playingCards.count {
                 for k in j+1..<playingCards.count {
                     if isMatched(with: [playingCards[i], playingCards[j], playingCards[k]]) {
+                        aSetOfCards.removeAll()
+                        aSetOfCards += [playingCards[i], playingCards[j], playingCards[k]]
                         return true
                     }
                 }
