@@ -52,7 +52,7 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                         </variation>
                                         <connections>
-                                            <action selector="dealCards:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ZjH-Qi-RnG"/>
+                                            <action selector="touchDealCardsButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Ifl-aj-zY0"/>
                                         </connections>
                                     </button>
                                 </subviews>

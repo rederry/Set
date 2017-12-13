@@ -14,8 +14,17 @@ class ViewController: UIViewController {
 
     @IBOutlet private weak var dealButton: UIButton!
     @IBOutlet private weak var scoreLabel: UILabel!
-    @IBOutlet weak var setBoardView: SetBoardView!
-    var cardViews = [SetCardView]()
+    @IBOutlet private weak var setBoardView: SetBoardView! {
+        didSet {
+            let swipe = UISwipeGestureRecognizer(target: self, action: #selector(dealCards))
+            swipe.direction = [.left, .right]
+            setBoardView.addGestureRecognizer(swipe)
+            
+            let rotate = UIRotationGestureRecognizer(target: self, action: #selector(reshuffle))
+            setBoardView.addGestureRecognizer(rotate)
+        }
+    }
+    private var cardViews = [SetCardView]()
 
     
     @IBAction private func resetGame(_ sender: UIButton) {
@@ -23,9 +32,25 @@ class ViewController: UIViewController {
         updateViewFromModel()
     }
     
-    @IBAction func dealCards(_ sender: UIButton) {
-        game.deal3MoreCards()
-        updateViewFromModel()
+    @IBAction func touchDealCardsButton(_ sender: UIButton) {
+        dealCards()
+    }
+    
+    @objc func dealCards() {
+        if !game.deckOfCards.isEmpty {
+            game.deal3MoreCards()
+            updateViewFromModel()
+        }
+    }
+    
+    @objc func reshuffle(_ sender: UITapGestureRecognizer) {
+        switch sender.state {
+        case .ended:
+            game.shufflePlayingCards()
+            updateViewFromModel()
+        default:
+            break
+        }
     }
     
     @objc func choseCard(_ sender: UITapGestureRecognizer) {

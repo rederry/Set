@@ -33,12 +33,16 @@ struct SetGame {
     
     // Require: select card in the playing cards
     mutating func selectCard(at playingCardindex:Int) {
+        
+        // TODO: Refactor(now the order of the code dose mater)
+        let selectCard = playingCards[playingCardindex]
+        
         if let matched = is3SelectedCardsMatched { // Replace 3 selected cards
             if matched { replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove() }
             selectedCards.removeAll()
         }
         
-        let selectCard = playingCards[playingCardindex]
+
         if selectedCards.contains(selectCard) {
             score -= 1
             selectedCards.remove(at: selectedCards.index(of: selectCard)!)
@@ -47,6 +51,13 @@ struct SetGame {
         }
         if let matched = is3SelectedCardsMatched { // Update socre
             score = matched ? score+3 : score-5
+        }
+    }
+    
+    mutating func shufflePlayingCards() {
+        for index in playingCards.indices {
+            let randomIndex = Int(arc4random_uniform(UInt32(playingCards.count)))
+            playingCards.swapAt(randomIndex, index)
         }
     }
     
