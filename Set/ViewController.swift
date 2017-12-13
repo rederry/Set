@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     @IBOutlet private weak var setBoardView: SetBoardView! {
         didSet {
             let swipe = UISwipeGestureRecognizer(target: self, action: #selector(dealCards))
-            swipe.direction = [.left, .right]
+            swipe.direction = .down
             setBoardView.addGestureRecognizer(swipe)
             
             let rotate = UIRotationGestureRecognizer(target: self, action: #selector(reshuffle))
