@@ -8,33 +8,68 @@
 
 import Foundation
 
-struct SetGame {
-    
-    // Invariant: deckOfCards.count + playingCards.count + matchedCards.count = 81
-    private let initPlayingCardsCount = 12
+/// - Invariant: deckOfCards.count + playingCards.count + matchedCards.count = 81
+class SetGame {
+
+    /// The current user score
     private(set) var score = 0
+    /// A deck of cards
     private(set) var deckOfCards = [SetCard]()
+    /// Current playing cards on table
     private(set) var playingCards = [SetCard]()
+    /// Current selected cards
     private(set) var selectedCards = [SetCard]()
+    /// Alread mathced cards
     private(set) var matchedCards = [SetCard]()
+    /// A set in playing cards
     private var aSetOfCards = [SetCard]()
-    var is3SelectedCardsMatched : Bool? { // Is 3 selected cards matched or select less than 3 cards
+    /// Have 3 selected cards and matched return true,not matched return false
+    /// less than 3 selected cards return nil
+    var is3SelectedCardsMatched : Bool? {
         get {
-            if selectedCards.count != 3 {
+            if selectedCards.count != Constant.aSetCardCount {
                 return nil
             }
             return isMatched(with: selectedCards)
         }
     }
-        
     
+    /// The score for player1
+    private(set) var scoreForPlayer1 = 0
+    /// The score for player2
+    private(set) var scoreForPlayer2 = 0
+    /// The current player to chose a set
+    private(set) var currentPlayer : Player?
+    enum Player {
+        case player1, player2
+    }
+
+    /// Set the current player to chose a set
+    /// - Parameter player: The player to play
+    /// - Requires: player != nil
+    func setTurn(for player: Player) {
+        currentPlayer = player
+        Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { (timer) in
+            self.currentPlayer = nil
+            if let matched = self.is3SelectedCardsMatched, matched{
+            } else {
+                self.selectedCards.removeAll()
+            }
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: self.playerTurnDidFinishNotification), object: nil)
+        }
+    }
+    let playerTurnDidFinishNotification = "playerTurnDidFinish"
+        
+    /// Creates a set game
     init() {
         setupDeckOfCards()
         setupPlayingCards()
     }
     
-    // Require: select card in the playing cards
-    mutating func selectCard(at playingCardindex:Int) {
+    /// Select a card in the game
+    /// - Parameter playingCardindex: The index of card in the playing cards
+    /// - Precondition: The playingCardindex < playingCards.count
+    func selectCard(at playingCardindex:Int) {
         
         // TODO: Refactor(now the order of the code dose mater)
         let selectCard = playingCards[playingCardindex]
@@ -42,39 +77,49 @@ struct SetGame {
         if let matched = is3SelectedCardsMatched { // Replace 3 selected cards
             if matched { replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove() }
             selectedCards.removeAll()
-            
-//            Timer.scheduledTimer(withTimeInterval: TimeInterval(30 + 60.arc4random), repeats: false, block: { (timer) in
-//                
-//            })
         }
         
 
         if selectedCards.contains(selectCard) {
-            score -= 1
+            score -= Constant.deselectPenalty
             selectedCards.remove(at: selectedCards.index(of: selectCard)!)
         } else {
             selectedCards.append(selectCard)
         }
         if let matched = is3SelectedCardsMatched { // Update socre
-            score = matched ? score+3 : score-5
+            if matched {
+                if let turn = currentPlayer {
+                    switch turn {
+                    case .player1:
+                        scoreForPlayer1 += 1
+                    case .player2:
+                        scoreForPlayer2 += 1
+                    }
+                }
+                score += Constant.matchPenalty
+            } else {
+                score -= Constant.mismatchPenalty
+            }
         }
     }
     
-    mutating func shufflePlayingCards() {
+    /// Shuffle cards on the table
+    func shufflePlayingCards() {
         for index in playingCards.indices {
             let randomIndex = Int(arc4random_uniform(UInt32(playingCards.count)))
             playingCards.swapAt(randomIndex, index)
         }
     }
     
-    mutating func cheat() {
+    func cheat() {
         if existASetInPlayingCards() {
             selectedCards.removeAll()
             aSetOfCards.forEach { selectedCards.append($0) }
         }
     }
     
-    mutating func resetGame() {
+    /// Reset the Game to initial state
+    func resetGame() {
         deckOfCards.removeAll()
         playingCards.removeAll()
         selectedCards.removeAll()
@@ -82,21 +127,27 @@ struct SetGame {
         setupDeckOfCards()
         setupPlayingCards()
         score = 0
+        scoreForPlayer1 = 0
+        scoreForPlayer2 = 0
+        currentPlayer = nil
     }
     
-    mutating func deal3MoreCards() {
+    /// Deal 3 more cards from deck
+    func deal3MoreCards() {
         if let matched = is3SelectedCardsMatched, matched {
             replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove()
             selectedCards.removeAll();
         } else {
             if existASetInPlayingCards() {
-                score -= 5
+                score -= Constant.mismatchPenalty
             }
-            for _ in 0..<3 { playingCards.append(draw()) }
+            for _ in 0..<Constant.aSetCardCount { playingCards.append(draw()) }
         }
     }
     
-    private mutating func replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove() {
+    /// Replace alread matched cards in the playing cards with new cards
+    /// If cards out of deck, remove matched cards
+    private func replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove() {
         if deckOfCards.isEmpty {
             for card in selectedCards {
                 playingCards.remove(at: playingCards.index(of: card)!)
@@ -115,7 +166,8 @@ struct SetGame {
     }
     
     // MARK: Extra Credit
-    private mutating func existASetInPlayingCards() -> Bool {
+    /// Returns true if has a set on the table
+    private func existASetInPlayingCards() -> Bool {
         for i in 0..<playingCards.count {
             for j in i+1..<playingCards.count {
                 for k in j+1..<playingCards.count {
@@ -130,6 +182,8 @@ struct SetGame {
         return false
     }
     
+    /// Returns true if the given cards matched
+    /// - Parameter cards: to matche
     private func isMatched(with cards:[SetCard]) -> Bool {
         var countSet = Set<SetCard.Count>()
         var colorSet = Set<SetCard.Color>()
@@ -149,12 +203,13 @@ struct SetGame {
         }
     }
     
-    // Require: !deckOfCards.isEmpty()
-    private mutating func draw() -> SetCard {
+    /// Returns a random card from deck
+    /// - Precondition: has card left in deck
+    private func draw() -> SetCard {
         return deckOfCards.remove(at: deckOfCards.count.arc4random)
     }
     
-    private mutating func setupDeckOfCards() {
+    private func setupDeckOfCards() {
         for count in SetCard.Count.allValues {
             for color in SetCard.Color.allValues {
                 for shape in SetCard.Shape.allValues {
@@ -166,10 +221,20 @@ struct SetGame {
         }
     }
     
-    private mutating func setupPlayingCards() {
-        for _ in 0..<initPlayingCardsCount {
+    private func setupPlayingCards() {
+        for _ in 0..<Constant.initPlayingCardsCount {
             playingCards.append(draw())
         }
+    }
+}
+
+extension SetGame {
+    struct Constant {
+        static let initPlayingCardsCount = 12
+        static let deselectPenalty  = 1
+        static let matchPenalty = 5
+        static let mismatchPenalty = 3
+        static let aSetCardCount = 3
     }
 }
 

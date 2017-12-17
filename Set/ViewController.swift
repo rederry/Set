@@ -12,6 +12,8 @@ class ViewController: UIViewController {
     
     var game = SetGame()
 
+    @IBOutlet weak var player1Button: UIButton!
+    @IBOutlet weak var player2Button: UIButton!
     @IBOutlet private weak var dealButton: UIButton!
     @IBOutlet private weak var scoreLabel: UILabel!
     @IBOutlet private weak var setBoardView: SetBoardView! {
@@ -26,6 +28,14 @@ class ViewController: UIViewController {
     }
     private var cardViews = [SetCardView]()
 
+    @IBAction func player1TouchSet(_ sender: UIButton) {
+        game.setTurn(for: .player1)
+        updateViewFromModel()
+    }
+    @IBAction func player2TouchSet(_ sender: UIButton) {
+        game.setTurn(for: .player2)
+        updateViewFromModel()
+    }
     
     @IBAction private func resetGame(_ sender: UIButton) {
         game.resetGame()
@@ -70,9 +80,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         updateViewFromModel()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateViewFromModel), name: NSNotification.Name(rawValue: game.playerTurnDidFinishNotification), object: nil)
     }
     
-    func updateViewFromModel() {
+    @objc func updateViewFromModel() {
         cardViews.removeAll()
         for index in 0..<game.playingCards.count {
             let card = game.playingCards[index]
@@ -86,6 +97,11 @@ class ViewController: UIViewController {
             } else {
                 cardView.isSelected = false
             }
+            if let _ = game.currentPlayer {
+                cardView.isUserInteractionEnabled = true
+            } else {
+                cardView.isUserInteractionEnabled = false
+            }
             cardViews.append(cardView)
         }
         
@@ -94,8 +110,16 @@ class ViewController: UIViewController {
         
         // Update Score Label
         scoreLabel.text = "Score: \(game.score)"
+        player1Button.setTitle("Set!(\(game.scoreForPlayer1))", for: .normal)
+        player2Button.setTitle("Set!(\(game.scoreForPlayer2))", for: .normal)
         
-        dealButton.isEnabled = !game.deckOfCards.isEmpty
+        if game.deckOfCards.isEmpty {
+            dealButton.setTitleColor(#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1), for: .normal)
+            dealButton.isEnabled = false
+        } else {
+            dealButton.setTitleColor(#colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1), for: .normal)
+            dealButton.isEnabled = true
+        }
     }
     
     private func createCardView(for card: SetCard) -> SetCardView {

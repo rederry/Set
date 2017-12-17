@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// An individual set game card
 struct SetCard: Equatable {
     
     let count: Count
