@@ -11,14 +11,13 @@ import UIKit
 //@IBDesignable
 class SetCardView: UIView {
     
-    private var count: Int = 1
-    private var color: UIColor = #colorLiteral(red: 0.8196078431, green: 0.1411764706, blue: 0.1960784314, alpha: 1)
-    private var shape: Shape = .diamond
-    private var grain: Grain = .solid
+    var count: Int = 1 { didSet { setNeedsDisplay(); setNeedsLayout() } }
+    var color: UIColor = #colorLiteral(red: 0.8196078431, green: 0.1411764706, blue: 0.1960784314, alpha: 1) { didSet { setNeedsDisplay(); setNeedsLayout() } }
+    var shape: Shape = .diamond { didSet { setNeedsDisplay(); setNeedsLayout() } }
+    var grain: Grain = .solid { didSet { setNeedsDisplay(); setNeedsLayout() } }
     
-    var isSelected = false
-    var isMatched: Bool?
-    
+    var isSelected = false { didSet { configStateBorder() } }
+    var isMatched: Bool? { didSet { configStateBorder() } }
     
     enum Shape {
         case diamond, oval, squiggle
@@ -53,23 +52,11 @@ class SetCardView: UIView {
         isOpaque = false
     }
     
-    override func draw(_ rect: CGRect) {
-        drawRoundConer(rect)
-        switch shape {
-        case .diamond:
-            drawDimond()
-        case .oval:
-            drawOval()
-        case .squiggle:
-            drawSquiggle()
-        }
-        drawStateBorder()
-    }
-    
-    private func drawStateBorder() {
+    private func configStateBorder() {
         layer.cornerRadius = cornerRadius
         layer.borderWidth = patternLineWidth*2
         layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
+        isUserInteractionEnabled = true
         if let matched = isMatched {
             if matched {
                 layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
@@ -79,6 +66,20 @@ class SetCardView: UIView {
             }
         } else if isSelected {
             layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
+        } else {
+            layer.borderWidth = 0
+        }
+    }
+    
+    override func draw(_ rect: CGRect) {
+        drawRoundConer(rect)
+        switch shape {
+        case .diamond:
+            drawDimond()
+        case .oval:
+            drawOval()
+        case .squiggle:
+            drawSquiggle()
         }
     }
     

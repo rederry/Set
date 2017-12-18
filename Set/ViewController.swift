@@ -26,7 +26,6 @@ class ViewController: UIViewController {
             setBoardView.addGestureRecognizer(rotate)
         }
     }
-    private var cardViews = [SetCardView]()
 
     @IBAction func player1TouchSet(_ sender: UIButton) {
         game.setTurn(for: .player1)
@@ -69,7 +68,7 @@ class ViewController: UIViewController {
     }
     
     @objc func choseCard(_ sender: UITapGestureRecognizer) {
-        if let cardView = sender.view as? SetCardView, let cardIndex = cardViews.index(of: cardView) {
+        if let cardView = sender.view as? SetCardView, let cardIndex = setBoardView.cardViews.index(of: cardView) {
             game.selectCard(at: cardIndex)
             updateViewFromModel()
         } else {
@@ -84,34 +83,43 @@ class ViewController: UIViewController {
     }
     
     @objc func updateViewFromModel() {
-        cardViews.removeAll()
         for index in 0..<game.playingCards.count {
             let card = game.playingCards[index]
-            let cardView = createCardView(for: card)
-            
-            if game.selectedCards.contains(card) { // highlight selected card view
-                cardView.isSelected = true
-                if let matched = game.is3SelectedCardsMatched { // Already selected 3 cards
-                    cardView.isMatched = matched
-                }
+
+            var cardView: SetCardView
+            if index >= setBoardView.cardViews.count {
+                cardView = createCardView()
+                configCardView(cardView, for: card)
+                setBoardView.cardViews.append(cardView)
+                setBoardView.addSubview(cardView)
             } else {
-                cardView.isSelected = false
+                cardView = setBoardView.cardViews[index]
+                configCardView(cardView, for: card)
             }
-            if let _ = game.currentPlayer {
-                cardView.isUserInteractionEnabled = true
-            } else {
-                cardView.isUserInteractionEnabled = false
-            }
-            cardViews.append(cardView)
         }
         
-        // Update views
-        setBoardView.cardViews = cardViews
+        // Remove off board card view
+        for _ in game.playingCards.count..<setBoardView.cardViews.count {            
+            setBoardView.cardViews.removeLast().removeFromSuperview()
+        }
         
         // Update Score Label
         scoreLabel.text = "Score: \(game.score)"
+        scoreLabel.text = "Remain: \(game.deckOfCards.count)"
         player1Button.setTitle("Set!(\(game.scoreForPlayer1))", for: .normal)
         player2Button.setTitle("Set!(\(game.scoreForPlayer2))", for: .normal)
+        
+        if let _ = game.currentPlayer {
+            player1Button.isEnabled = false
+            player2Button.isEnabled = false
+            player1Button.setTitleColor(#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1), for: .normal)
+            player2Button.setTitleColor(#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1), for: .normal)
+        } else {
+            player1Button.isEnabled = true
+            player2Button.isEnabled = true
+            player1Button.setTitleColor(#colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1), for: .normal)
+            player2Button.setTitleColor(#colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1), for: .normal)
+        }
         
         if game.deckOfCards.isEmpty {
             dealButton.setTitleColor(#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1), for: .normal)
@@ -122,7 +130,14 @@ class ViewController: UIViewController {
         }
     }
     
-    private func createCardView(for card: SetCard) -> SetCardView {
+    private func createCardView() -> SetCardView {
+        let cardView = SetCardView()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(choseCard))
+        cardView.addGestureRecognizer(tap)
+        return cardView
+    }
+    
+    private func configCardView(_ cardView: SetCardView, for card: SetCard) {
         let count = card.count.rawValue
         let color: UIColor
         let shape: SetCardView.Shape
@@ -151,14 +166,36 @@ class ViewController: UIViewController {
         case .grainC:
             grain = .striped
         }
-        let cardView = SetCardView(with: count, color, shape, grain)
         
-        let tap = UITapGestureRecognizer(target: self, action: #selector(choseCard))
-        cardView.addGestureRecognizer(tap)
-        
-        return cardView
-    }
-
+        if cardView.count != count {
+            cardView.count = count
+        }
+        if cardView.color != color {
+            cardView.color = color
+        }
+        if cardView.shape != shape {
+            cardView.shape = shape
+        }
+        if cardView.grain != grain {
+            cardView.grain = grain
+        }
     
+        if game.selectedCards.contains(card) { // highlight selected card view
+            cardView.isSelected = true
+            if let matched = game.is3SelectedCardsMatched { // Already selected 3 cards
+                cardView.isMatched = matched
+            }
+        } else {
+            cardView.isMatched = nil
+            cardView.isSelected = false
+        }
+        
+        if let _ = game.currentPlayer { // have a player
+            cardView.isUserInteractionEnabled = true
+        } else {
+            cardView.isUserInteractionEnabled = false
+        }
+        
+    }
 }
 

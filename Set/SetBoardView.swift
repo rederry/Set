@@ -10,12 +10,7 @@ import UIKit
 
 class SetBoardView: UIView {
 
-    var cardViews = [SetCardView]() {
-        willSet {
-            cardViews.forEach{$0.removeFromSuperview()}
-            newValue.forEach{addSubview($0)}
-        }
-    }
+    var cardViews = [SetCardView]()
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -23,9 +18,9 @@ class SetBoardView: UIView {
     }
     
     private func layoutSetCards() {
-        var grid = Grid(layout: .aspectRatio(0.7), frame: bounds)
+        var grid = Grid(layout: .aspectRatio(Constant.cellAspectRatio), frame: bounds)
         grid.cellCount = cardViews.count
-        let cellPadding: CGFloat = 5
+        let cellPadding = Constant.cellPadding
         for index in 0..<grid.cellCount {
             if let frame = grid[index] {
                 let cardFrame = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width - cellPadding,
@@ -35,5 +30,11 @@ class SetBoardView: UIView {
             }
         }
     }
+}
 
+extension SetBoardView {
+    struct Constant {
+        static let cellAspectRatio: CGFloat = 0.7
+        static let cellPadding: CGFloat  = 5
+    }
 }
