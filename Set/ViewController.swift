@@ -12,19 +12,24 @@ class ViewController: UIViewController {
     
     var game = SetGame()
 
+    @IBOutlet weak var dealStackView: UIStackView!
     @IBOutlet weak var player1Button: UIButton!
     @IBOutlet weak var player2Button: UIButton!
     @IBOutlet private weak var dealButton: UIButton!
     @IBOutlet private weak var scoreLabel: UILabel!
     @IBOutlet private weak var setBoardView: SetBoardView! {
         didSet {
-            let swipe = UISwipeGestureRecognizer(target: self, action: #selector(dealCards))
+            let swipe = UISwipeGestureRecognizer(target: self, action: #selector(deal3Cards))
             swipe.direction = .down
             setBoardView.addGestureRecognizer(swipe)
             
             let rotate = UIRotationGestureRecognizer(target: self, action: #selector(reshuffle))
             setBoardView.addGestureRecognizer(rotate)
         }
+    }
+    
+    private var deckFrame: CGRect {
+        return CGRect(x: dealStackView.center.x, y: dealStackView.center.y, width: setBoardView.cardViews[0].bounds.size.width, height: setBoardView.cardViews[0].bounds.size.height)
     }
 
     @IBAction func player1TouchSet(_ sender: UIButton) {
@@ -47,14 +52,26 @@ class ViewController: UIViewController {
     }
     
     @IBAction func touchDealCardsButton(_ sender: UIButton) {
-        dealCards()
+        deal3Cards()
     }
     
-    @objc func dealCards() {
+    @objc func deal3Cards() {
         if !game.deckOfCards.isEmpty {
-            game.deal3MoreCards()
+            game.deal3Cards()
             updateViewFromModel()
         }
+//        // Rearrange first
+//        // - MARK: Placeholder for deal a card animation
+//        for cardView in setBoardView.cardViews {
+//            if cardView.alpha == 0 {
+//                let currentFrame = cardView.frame
+//                cardView.frame = self.deckFrame
+//                cardView.alpha = 1
+//                UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 0.5, options: [], animations: {
+//                    cardView.frame = currentFrame
+//                }, completion: nil)
+//            }
+//        }
     }
     
     @objc func reshuffle(_ sender: UITapGestureRecognizer) {
@@ -80,27 +97,54 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         updateViewFromModel()
         NotificationCenter.default.addObserver(self, selector: #selector(updateViewFromModel), name: NSNotification.Name(rawValue: game.playerTurnDidFinishNotification), object: nil)
+        
+//        print("x: \(dealButton.frame.maxX), y: \(dealButton.frame.maxY),")
+//        print("x: \(dealStackView.frame.maxX), y: \(dealStackView.frame.maxY),")
     }
     
     @objc func updateViewFromModel() {
+        
         for index in 0..<game.playingCards.count {
             let card = game.playingCards[index]
 
             var cardView: SetCardView
             if index >= setBoardView.cardViews.count {
                 cardView = createCardView()
-                configCardView(cardView, for: card)
+                updateCardView(cardView, for: card)
                 setBoardView.cardViews.append(cardView)
                 setBoardView.addSubview(cardView)
             } else {
                 cardView = setBoardView.cardViews[index]
-                configCardView(cardView, for: card)
+                updateCardView(cardView, for: card)
+                configCardViewState(cardView, card)
             }
         }
+        
+//        if let matched = game.is3SelectedCardsMatched, matched {
+//            Timer.scheduledTimer(withTimeInterval: Constants.cardDisappearTime, repeats: false, block: { (timer) in
+//                self.deal3Cards()
+//            })
+//        }
         
         // Remove off board card view
         for _ in game.playingCards.count..<setBoardView.cardViews.count {            
             setBoardView.cardViews.removeLast().removeFromSuperview()
+        }
+        
+        if let matched = game.is3SelectedCardsMatched, matched {
+        } else {
+        // Rearrange first
+        // - MARK: Placeholder for deal a card animation
+        for cardView in setBoardView.cardViews {
+            if cardView.alpha == 0 {
+                let currentFrame = cardView.frame
+                cardView.frame = self.deckFrame
+                cardView.alpha = 1
+                UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 0.5, options: [], animations: {
+                    cardView.frame = currentFrame
+                }, completion: nil)
+            }
+        }
         }
         
         // Update Score Label
@@ -130,14 +174,32 @@ class ViewController: UIViewController {
         }
     }
     
-    private func createCardView() -> SetCardView {
-        let cardView = SetCardView()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(choseCard))
-        cardView.addGestureRecognizer(tap)
-        return cardView
+    private func configCardViewState(_ cardView: SetCardView, _ card: SetCard) {
+        cardView.layer.cornerRadius = cardView.cornerRadius
+        cardView.layer.borderWidth = cardView.patternLineWidth*2
+        cardView.layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
+        cardView.isUserInteractionEnabled = true
+        if game.selectedCards.contains(card) { // highlight selected card view
+            cardView.layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
+            if let matched = game.is3SelectedCardsMatched { // Already selected 3 cards
+                if matched {
+                    cardView.layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
+                    cardView.isUserInteractionEnabled = false
+                    //- MARK: Placeholder for flyaway animation
+                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 0, options: [], animations: {
+                        cardView.alpha = 0
+                    }, completion: nil)
+                } else {
+                    cardView.layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
+                }
+            }
+        } else {
+            cardView.layer.borderWidth = 0
+        }
     }
     
-    private func configCardView(_ cardView: SetCardView, for card: SetCard) {
+    /// Update the card view use a card model
+    private func updateCardView(_ cardView: SetCardView, for card: SetCard) {
         let count = card.count.rawValue
         let color: UIColor
         let shape: SetCardView.Shape
@@ -179,23 +241,28 @@ class ViewController: UIViewController {
         if cardView.grain != grain {
             cardView.grain = grain
         }
+        
+//        if let _ = game.currentPlayer { // have a player
+//            cardView.isUserInteractionEnabled = true
+//        } else {
+//            cardView.isUserInteractionEnabled = false
+//        }
+    }
     
-        if game.selectedCards.contains(card) { // highlight selected card view
-            cardView.isSelected = true
-            if let matched = game.is3SelectedCardsMatched { // Already selected 3 cards
-                cardView.isMatched = matched
-            }
-        } else {
-            cardView.isMatched = nil
-            cardView.isSelected = false
-        }
-        
-        if let _ = game.currentPlayer { // have a player
-            cardView.isUserInteractionEnabled = true
-        } else {
-            cardView.isUserInteractionEnabled = false
-        }
-        
+    private func createCardView() -> SetCardView {
+        let cardView = SetCardView()
+//        cardView.frame = CGRect(x: dealStackView.frame.minX, y: dealStackView.frame.minY, width: 0, height: 0)
+        cardView.alpha = 0
+        let tap = UITapGestureRecognizer(target: self, action: #selector(choseCard))
+        cardView.addGestureRecognizer(tap)
+        return cardView
+    }
+}
+
+extension ViewController {
+    struct Constants {
+        static let cardDisappearTime: TimeInterval = 1
+        static let cardDealTime: TimeInterval = 1
     }
 }
 

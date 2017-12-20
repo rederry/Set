@@ -16,8 +16,8 @@ class SetCardView: UIView {
     var shape: Shape = .diamond { didSet { setNeedsDisplay(); setNeedsLayout() } }
     var grain: Grain = .solid { didSet { setNeedsDisplay(); setNeedsLayout() } }
     
-    var isSelected = false { didSet { configStateBorder() } }
-    var isMatched: Bool? { didSet { configStateBorder() } }
+//    var isSelected = false { didSet { configStateBorder() } }
+//    var isMatched: Bool? { didSet { configStateBorder() } }
     
     enum Shape {
         case diamond, oval, squiggle
@@ -52,24 +52,27 @@ class SetCardView: UIView {
         isOpaque = false
     }
     
-    private func configStateBorder() {
-        layer.cornerRadius = cornerRadius
-        layer.borderWidth = patternLineWidth*2
-        layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-        isUserInteractionEnabled = true
-        if let matched = isMatched {
-            if matched {
-                layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
-                isUserInteractionEnabled = false
-            } else {
-                layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
-            }
-        } else if isSelected {
-            layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
-        } else {
-            layer.borderWidth = 0
-        }
-    }
+//    private func configStateBorder() {
+//        layer.cornerRadius = cornerRadius
+//        layer.borderWidth = patternLineWidth*2
+//        layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
+//        isUserInteractionEnabled = true
+//        if let matched = isMatched {
+//            if matched {
+//                layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
+//                isUserInteractionEnabled = false
+//                UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 2, delay: 0, options: [.curveEaseInOut], animations: {
+//                    self.alpha = 0
+//                }, completion: nil)
+//            } else {
+//                layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
+//            }
+//        } else if isSelected {
+//            layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
+//        } else {
+//            layer.borderWidth = 0
+//        }
+//    }
     
     override func draw(_ rect: CGRect) {
         drawRoundConer(rect)
@@ -214,11 +217,11 @@ extension SetCardView {
         return CGPoint(x: bounds.midX - patternWidth/2, y: bounds.midY - patternHeight/2)
     }
     
-    private var cornerRadius: CGFloat {
+    var cornerRadius: CGFloat {
         return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
     }
     
-    private var patternLineWidth: CGFloat {
+    var patternLineWidth: CGFloat {
         return bounds.width * SizeRatio.patternLineWidthToBoundsWidth
     }
     

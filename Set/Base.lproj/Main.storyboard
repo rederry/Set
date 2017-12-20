@@ -28,7 +28,7 @@
                                 <rect key="frame" x="16" y="91" width="343" height="574"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZFh-It-fNu">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZFh-It-fNu">
                                 <rect key="frame" x="301" y="47" width="58" height="39"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="30"/>
@@ -135,6 +135,7 @@
                     </view>
                     <connections>
                         <outlet property="dealButton" destination="73l-0i-xPU" id="GjC-f0-P9b"/>
+                        <outlet property="dealStackView" destination="06h-oL-nuX" id="NMW-rq-6ab"/>
                         <outlet property="player1Button" destination="kZP-jj-Unk" id="Max-6a-GEf"/>
                         <outlet property="player2Button" destination="tNP-tp-evX" id="6z7-dB-aMM"/>
                         <outlet property="scoreLabel" destination="Hcm-AN-xS1" id="kev-Nv-j4D"/>

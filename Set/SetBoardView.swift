@@ -23,10 +23,14 @@ class SetBoardView: UIView {
         let cellPadding = Constant.cellPadding
         for index in 0..<grid.cellCount {
             if let frame = grid[index] {
-                let cardFrame = CGRect(x: frame.origin.x, y: frame.origin.y, width: frame.width - cellPadding,
+                let cardFrame = CGRect(x: frame.origin.x, y: frame.origin.y,
+                                       width: frame.width - cellPadding,
                                        height: frame.height - cellPadding)
                 let setCardView = cardViews[index]
-                setCardView.frame = cardFrame
+//                setCardView.frame = cardFrame
+                UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.5, delay: 0, options: [.curveEaseInOut], animations: {
+                    setCardView.frame = cardFrame
+                }, completion: nil)
             }
         }
     }

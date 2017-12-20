@@ -133,7 +133,7 @@ class SetGame {
     }
     
     /// Deal 3 more cards from deck
-    func deal3MoreCards() {
+    func deal3Cards() {
         if let matched = is3SelectedCardsMatched, matched {
             replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove()
             selectedCards.removeAll();
@@ -185,6 +185,7 @@ class SetGame {
     /// Returns true if the given cards matched
     /// - Parameter cards: to matche
     private func isMatched(with cards:[SetCard]) -> Bool {
+        if cards.count != 3 { return false }
         var countSet = Set<SetCard.Count>()
         var colorSet = Set<SetCard.Color>()
         var shapeSet = Set<SetCard.Shape>()
