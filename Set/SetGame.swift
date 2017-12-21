@@ -136,7 +136,7 @@ class SetGame {
     func deal3Cards() {
         if let matched = is3SelectedCardsMatched, matched {
             replaceMatchedPlayingCardsWithNewCardsIfNoCardsInDeckThenRemove()
-            selectedCards.removeAll();
+            selectedCards.removeAll()
         } else {
             if existASetInPlayingCards() {
                 score -= Constant.mismatchPenalty
