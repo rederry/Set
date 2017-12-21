@@ -27,26 +27,12 @@ class ViewController: UIViewController {
             setBoardView.addGestureRecognizer(rotate)
         }
     }
+    //UIDynamicAnimator
+    private lazy var animator = UIDynamicAnimator(referenceView: setBoardView)
     
     private var deckFrame: CGRect {
         return CGRect(x: dealStackView.center.x, y: dealStackView.center.y, width: setBoardView.cardViews[0].bounds.size.width, height: setBoardView.cardViews[0].bounds.size.height)
     }
-    
-    private lazy var animator = UIDynamicAnimator(referenceView: setBoardView)
-    private lazy var collisionBehavior: UICollisionBehavior = {
-       let behavior = UICollisionBehavior()
-        behavior.translatesReferenceBoundsIntoBoundary = true
-        animator.addBehavior(behavior)
-        return behavior
-    }()
-    private lazy var itemBehavior: UIDynamicItemBehavior = {
-       let behavior = UIDynamicItemBehavior()
-        behavior.allowsRotation = false
-        behavior.elasticity = 1.0
-        behavior.resistance = 0
-        animator.addBehavior(behavior)
-        return behavior
-    }()
 
     @IBAction func player1TouchSet(_ sender: UIButton) {
         game.setTurn(for: .player1)
@@ -59,6 +45,7 @@ class ViewController: UIViewController {
     
     @IBAction private func resetGame(_ sender: UIButton) {
         game.resetGame()
+        setBoardView.cardViews.forEach { $0.alpha = 0 }
         updateViewFromModel()
     }
     
@@ -139,7 +126,7 @@ class ViewController: UIViewController {
                     let currentFrame = cardView.frame
                     cardView.frame = self.deckFrame
                     cardView.alpha = 1
-                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 0.5, options: [], animations: {
+                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 1, delay: 0.5, options: [], animations: {
                         cardView.frame = currentFrame
                     }, completion: nil)
                 }
@@ -174,41 +161,14 @@ class ViewController: UIViewController {
     }
     
     private func configCardViewState(_ cardView: SetCardView, _ card: SetCard) {
-        cardView.layer.cornerRadius = cardView.cornerRadius
-        cardView.layer.borderWidth = cardView.patternLineWidth*2
-        cardView.layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-        cardView.isUserInteractionEnabled = true
-        if game.selectedCards.contains(card) { // highlight selected card view
-            cardView.layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
-            if let matched = game.is3SelectedCardsMatched { // Already selected 3 cards
-                if matched {
-                    cardView.layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
-                    cardView.isUserInteractionEnabled = false
-                    //- MARK: Placeholder for flyaway animation
-                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 1, options: [], animations: {
-                        cardView.alpha = 0
-                    }, completion: nil)
-                    collisionBehavior.addItem(cardView)
-                    itemBehavior.addItem(cardView)
-                    let pushBehavior = UIPushBehavior(items: [cardView], mode: .instantaneous)
-                    pushBehavior.magnitude = 1.0 + CGFloat(2.0).arc4random
-                    pushBehavior.angle = (2*CGFloat.pi).arc4random
-                    pushBehavior.action = { [unowned pushBehavior] in
-                        pushBehavior.dynamicAnimator?.removeBehavior(pushBehavior)
-                    }
-                    pushBehavior.addItem(cardView)
-                    animator.addBehavior(pushBehavior)
-                } else {
-                    cardView.layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
-                    collisionBehavior.removeItem(cardView)
-                    itemBehavior.removeItem(cardView)
-                }
-            }
+        if game.selectedCards.contains(card) {
+            cardView.isSelected = true
+            cardView.isMatched = game.is3SelectedCardsMatched
         } else {
-            collisionBehavior.removeItem(cardView)
-            itemBehavior.removeItem(cardView)
-            cardView.layer.borderWidth = 0
+            cardView.isSelected = false
+            cardView.isMatched = nil
         }
+        cardView.configState()
     }
     
     /// Update the card view use a card model
@@ -263,19 +223,11 @@ class ViewController: UIViewController {
     }
     
     private func createCardView() -> SetCardView {
-        let cardView = SetCardView()
+        let cardView = SetCardView(animator: animator)
 //        cardView.frame = CGRect(x: dealStackView.frame.minX, y: dealStackView.frame.minY, width: 0, height: 0)
-        cardView.alpha = 0
         let tap = UITapGestureRecognizer(target: self, action: #selector(choseCard))
         cardView.addGestureRecognizer(tap)
         return cardView
-    }
-}
-
-extension ViewController {
-    struct Constants {
-        static let cardDisappearTime: TimeInterval = 1
-        static let cardDealTime: TimeInterval = 1
     }
 }
 

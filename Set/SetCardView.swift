@@ -16,8 +16,11 @@ class SetCardView: UIView {
     var shape: Shape = .diamond { didSet { setNeedsDisplay(); setNeedsLayout() } }
     var grain: Grain = .solid { didSet { setNeedsDisplay(); setNeedsLayout() } }
     
-//    var isSelected = false { didSet { configStateBorder() } }
-//    var isMatched: Bool? { didSet { configStateBorder() } }
+    var isSelected = false
+    var isMatched: Bool?
+    
+    private var behavior = CardBehavior()
+
     
     enum Shape {
         case diamond, oval, squiggle
@@ -29,13 +32,11 @@ class SetCardView: UIView {
         static let allValues = [solid, striped, outlined]
     }
     
-    convenience init(with count: Int, _ color: UIColor, _ shape: Shape, _ grain: Grain) {
+    convenience init(animator: UIDynamicAnimator) {
         self.init(frame: CGRect.zero)
-        self.count = count
-        self.color = color
-        self.shape = shape
-        self.grain = grain
+        behavior = CardBehavior(animator)
     }
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,31 +49,38 @@ class SetCardView: UIView {
     }
     
     private func setup() {
+        alpha = 0
         backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
         isOpaque = false
     }
     
-//    private func configStateBorder() {
-//        layer.cornerRadius = cornerRadius
-//        layer.borderWidth = patternLineWidth*2
-//        layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-//        isUserInteractionEnabled = true
-//        if let matched = isMatched {
-//            if matched {
-//                layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
-//                isUserInteractionEnabled = false
-//                UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 2, delay: 0, options: [.curveEaseInOut], animations: {
-//                    self.alpha = 0
-//                }, completion: nil)
-//            } else {
-//                layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
-//            }
-//        } else if isSelected {
-//            layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
-//        } else {
-//            layer.borderWidth = 0
-//        }
-//    }
+    
+    func configState() {
+        layer.cornerRadius = cornerRadius
+        layer.borderWidth = patternLineWidth*2
+        layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
+        isUserInteractionEnabled = true
+        if isSelected { // highlight selected card view
+            layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
+            if let matched = isMatched { // Already selected 3 cards
+                if matched {
+                    layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
+                    isUserInteractionEnabled = false
+                    //- MARK: Placeholder for flyaway animation
+                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 1, options: [], animations: {
+                        self.alpha = 0
+                    }, completion: nil)
+                    behavior.addItem(self)
+                } else {
+                    layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
+                    behavior.remove(self)
+                }
+            }
+        } else {
+            behavior.remove(self)
+            layer.borderWidth = 0
+        }
+    }
     
     override func draw(_ rect: CGRect) {
         drawRoundConer(rect)
@@ -192,41 +200,43 @@ class SetCardView: UIView {
 }
 
 extension SetCardView {
-    private struct SizeRatio {
+    private struct Constants {
         static let patternMarginToBoundsHeight: CGFloat = 0.07
         static let patternHeightToBoundsHeight: CGFloat = 0.22
         static let patternWidthToBoundsWidth: CGFloat = 0.8
         static let patternLineWidthToBoundsWidth: CGFloat = 0.015
         static let stripIntervalToBoundsWidth: CGFloat = 0.03
         static let cornerRadiusToBoundsHeight: CGFloat = 0.06
+        static let cardDisappearTime: TimeInterval = 1
+        static let cardDealTime: TimeInterval = 1
     }
     
     private var patternHeight: CGFloat {
-        return bounds.height * SizeRatio.patternHeightToBoundsHeight
+        return bounds.height * Constants.patternHeightToBoundsHeight
     }
     
     private var patternWidth: CGFloat {
-        return bounds.width * SizeRatio.patternWidthToBoundsWidth
+        return bounds.width * Constants.patternWidthToBoundsWidth
     }
     
     private var patternMargin: CGFloat {
-        return bounds.size.height * SizeRatio.patternMarginToBoundsHeight
+        return bounds.size.height * Constants.patternMarginToBoundsHeight
     }
     
     private var patternOrgin: CGPoint {
         return CGPoint(x: bounds.midX - patternWidth/2, y: bounds.midY - patternHeight/2)
     }
     
-    var cornerRadius: CGFloat {
-        return bounds.size.height * SizeRatio.cornerRadiusToBoundsHeight
+    private var cornerRadius: CGFloat {
+        return bounds.size.height * Constants.cornerRadiusToBoundsHeight
     }
     
-    var patternLineWidth: CGFloat {
-        return bounds.width * SizeRatio.patternLineWidthToBoundsWidth
+    private var patternLineWidth: CGFloat {
+        return bounds.width * Constants.patternLineWidthToBoundsWidth
     }
     
     private var stripInterval: CGFloat {
-        return bounds.width * SizeRatio.stripIntervalToBoundsWidth
+        return bounds.width * Constants.stripIntervalToBoundsWidth
     }
 }
 

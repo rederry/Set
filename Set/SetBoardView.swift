@@ -27,7 +27,6 @@ class SetBoardView: UIView {
                                        width: frame.width - cellPadding,
                                        height: frame.height - cellPadding)
                 let setCardView = cardViews[index]
-//                setCardView.frame = cardFrame
                 UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.5, delay: 0, options: [.curveEaseInOut], animations: {
                     setCardView.frame = cardFrame
                 }, completion: nil)
