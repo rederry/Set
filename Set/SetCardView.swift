@@ -8,7 +8,6 @@
 
 import UIKit
 
-//@IBDesignable
 class SetCardView: UIView {
     
     var count: Int = 1 { didSet { setNeedsDisplay(); setNeedsLayout() } }
@@ -19,7 +18,7 @@ class SetCardView: UIView {
     var isSelected = false
     var isMatched: Bool?
     
-    private var behavior = CardBehavior()
+    private weak var behavior: CardBehavior?
 
     
     enum Shape {
@@ -32,19 +31,9 @@ class SetCardView: UIView {
         static let allValues = [solid, striped, outlined]
     }
     
-    convenience init(animator: UIDynamicAnimator) {
+    convenience init(_ behavior: CardBehavior) {
         self.init(frame: CGRect.zero)
-        behavior = CardBehavior(animator)
-    }
-    
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+        self.behavior = behavior
         setup()
     }
     
@@ -54,32 +43,52 @@ class SetCardView: UIView {
         isOpaque = false
     }
     
-    
+//    private lazy var tmpCard = copyCard()
     func configState() {
         layer.cornerRadius = cornerRadius
         layer.borderWidth = patternLineWidth*2
         layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
         isUserInteractionEnabled = true
+
         if isSelected { // highlight selected card view
             layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
             if let matched = isMatched { // Already selected 3 cards
                 if matched {
                     layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
                     isUserInteractionEnabled = false
-                    //- MARK: Placeholder for flyaway animation
-                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 1, options: [], animations: {
-                        self.alpha = 0
-                    }, completion: nil)
-                    behavior.addItem(self)
+                    
+                    //- MARK: flyaway animation
+                    let tmpCard = copyCard()
+                    self.superview!.addSubview(tmpCard)
+                    self.behavior?.addItem(tmpCard)
+                    self.alpha = 0
+                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 0, options: [.curveEaseInOut], animations: {
+                        tmpCard.alpha = 0
+                    })
+                    Timer.scheduledTimer(withTimeInterval: Constants.cardDisappearTime, repeats: false, block: { (timer) in
+                        self.behavior?.remove(tmpCard)
+                        tmpCard.removeFromSuperview()
+                    })
+
                 } else {
                     layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
-                    behavior.remove(self)
                 }
             }
         } else {
-            behavior.remove(self)
             layer.borderWidth = 0
         }
+    }
+    
+    private func copyCard() -> SetCardView {
+        let copy = SetCardView()
+        copy.color = color
+        copy.count = count
+        copy.shape = shape
+        copy.grain = grain
+        copy.bounds = bounds
+        copy.frame = frame
+        copy.alpha = 1
+        return copy
     }
     
     override func draw(_ rect: CGRect) {
@@ -207,7 +216,7 @@ extension SetCardView {
         static let patternLineWidthToBoundsWidth: CGFloat = 0.015
         static let stripIntervalToBoundsWidth: CGFloat = 0.03
         static let cornerRadiusToBoundsHeight: CGFloat = 0.06
-        static let cardDisappearTime: TimeInterval = 1
+        static let cardDisappearTime: TimeInterval = 2
         static let cardDealTime: TimeInterval = 1
     }
     

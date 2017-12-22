@@ -29,6 +29,7 @@ class ViewController: UIViewController {
     }
     //UIDynamicAnimator
     private lazy var animator = UIDynamicAnimator(referenceView: setBoardView)
+    private lazy var behavior = CardBehavior(animator)
     
     private var deckFrame: CGRect {
         return CGRect(x: dealStackView.center.x, y: dealStackView.center.y, width: setBoardView.cardViews[0].bounds.size.width, height: setBoardView.cardViews[0].bounds.size.height)
@@ -88,24 +89,21 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         updateViewFromModel()
         NotificationCenter.default.addObserver(self, selector: #selector(updateViewFromModel), name: NSNotification.Name(rawValue: game.playerTurnDidFinishNotification), object: nil)
-        
 //        print("x: \(dealButton.frame.maxX), y: \(dealButton.frame.maxY),")
 //        print("x: \(dealStackView.frame.maxX), y: \(dealStackView.frame.maxY),")
     }
     
     @objc func updateViewFromModel() {
-        
         for index in 0..<game.playingCards.count {
             let card = game.playingCards[index]
 
-            var cardView: SetCardView
             if index >= setBoardView.cardViews.count {
-                cardView = createCardView()
+                let cardView = createCardView()
                 updateCardView(cardView, for: card)
                 setBoardView.cardViews.append(cardView)
                 setBoardView.addSubview(cardView)
             } else {
-                cardView = setBoardView.cardViews[index]
+                let cardView = setBoardView.cardViews[index]
                 updateCardView(cardView, for: card)
                 configCardViewState(cardView, card)
             }
@@ -117,6 +115,7 @@ class ViewController: UIViewController {
         }
         
         if let matched = game.is3SelectedCardsMatched, matched {
+            deal3Cards()
         } else {
             // Rearrange first
             // - MARK: Placeholder for deal a card animation
@@ -171,6 +170,13 @@ class ViewController: UIViewController {
         cardView.configState()
     }
     
+    private func createCardView() -> SetCardView {
+        let cardView = SetCardView(behavior)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(choseCard))
+        cardView.addGestureRecognizer(tap)
+        return cardView
+    }
+    
     /// Update the card view use a card model
     private func updateCardView(_ cardView: SetCardView, for card: SetCard) {
         let count = card.count.rawValue
@@ -222,24 +228,5 @@ class ViewController: UIViewController {
 //        }
     }
     
-    private func createCardView() -> SetCardView {
-        let cardView = SetCardView(animator: animator)
-//        cardView.frame = CGRect(x: dealStackView.frame.minX, y: dealStackView.frame.minY, width: 0, height: 0)
-        let tap = UITapGestureRecognizer(target: self, action: #selector(choseCard))
-        cardView.addGestureRecognizer(tap)
-        return cardView
-    }
-}
-
-extension CGFloat {
-    var arc4random: CGFloat {
-        if self > 0 {
-        return CGFloat(arc4random_uniform(UInt32(self)))
-        } else if self < 0 {
-            return -CGFloat(arc4random_uniform(UInt32(abs(self))))
-        } else {
-            return 0
-        }
-    }
 }
 
