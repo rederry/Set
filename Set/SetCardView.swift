@@ -17,8 +17,9 @@ class SetCardView: UIView {
     
     var isSelected = false
     var isMatched: Bool?
+    var isFaceup = false { didSet { setNeedsDisplay(); setNeedsLayout() } }
     
-    private weak var behavior: CardBehavior?
+    private weak var behavior: CardFlyawayBehavior?
 
     
     enum Shape {
@@ -31,7 +32,7 @@ class SetCardView: UIView {
         static let allValues = [solid, striped, outlined]
     }
     
-    convenience init(_ behavior: CardBehavior) {
+    convenience init(_ behavior: CardFlyawayBehavior) {
         self.init(frame: CGRect.zero)
         self.behavior = behavior
         setup()
@@ -58,18 +59,20 @@ class SetCardView: UIView {
                     isUserInteractionEnabled = false
                     
                     //- MARK: flyaway animation
-                    let tmpCard = copyCard()
-                    self.superview!.addSubview(tmpCard)
-                    self.behavior?.addItem(tmpCard)
-                    self.alpha = 0
-                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constants.cardDisappearTime, delay: 0, options: [.curveEaseInOut], animations: {
-                        tmpCard.alpha = 0
-                    })
-                    Timer.scheduledTimer(withTimeInterval: Constants.cardDisappearTime, repeats: false, block: { (timer) in
-                        self.behavior?.remove(tmpCard)
-                        tmpCard.removeFromSuperview()
-                    })
+//                    let tmpCard = copyCard()
+//                    self.superview!.addSubview(tmpCard)
+//                    self.behavior?.addItem(tmpCard)
+//                    self.alpha = 0
 
+//                    Timer.scheduledTimer(withTimeInterval: Constants.cardDisappearTime, repeats: false, block: { (timer) in
+//                        UIView.transition(with: tmpCard, duration: 1, options: [.transitionFlipFromLeft], animations: {
+//                            tmpCard.isFaceup = false
+//                        }, completion: { (isComplete) in
+//                            self.behavior?.remove(tmpCard)
+//                            tmpCard.removeFromSuperview()
+//                        })
+//                    })
+                    
                 } else {
                     layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
                 }
@@ -79,20 +82,58 @@ class SetCardView: UIView {
         }
     }
     
-    private func copyCard() -> SetCardView {
+    func copyCard() -> SetCardView {
         let copy = SetCardView()
         copy.color = color
         copy.count = count
         copy.shape = shape
         copy.grain = grain
+        copy.isFaceup = true
         copy.bounds = bounds
         copy.frame = frame
         copy.alpha = 1
+        copy.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
         return copy
+    }
+    
+    func animateDeal(from deckCenter: CGPoint) {
+//        print("Before--Frame: \(frame), Center: \(center)")
+        let currentCenter = center
+        center = deckCenter
+        alpha = 1
+        isFaceup = false
+//        print("After--Frame1: \(frame), Center: \(center)")
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 1, delay: 0.5, options: [], animations: {
+            self.center = currentCenter
+        }, completion: { position in
+            UIView.transition(with: self, duration: 0.5, options: [.transitionFlipFromLeft], animations: {
+                self.isFaceup = true
+            }, completion: nil)
+        })
     }
     
     override func draw(_ rect: CGRect) {
         drawRoundConer(rect)
+        isFaceup ? drawShape() : drawBack()
+    }
+    
+    private func drawRoundConer(_ rect: CGRect) {
+        let roundedRect = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius)
+        roundedRect.addClip()
+        #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0).setFill()
+        roundedRect.fill()
+    }
+    
+    private func drawBack() {
+        let font = UIFont(name: "Party LET", size: backFontsize)!
+        let attr: [NSAttributedStringKey : Any] = [
+            .font : font,
+        ]
+        let text = NSAttributedString(string: "K", attributes: attr)
+        text.draw(at: CGPoint.zero)
+    }
+    
+    private func drawShape() {
         switch shape {
         case .diamond:
             drawDimond()
@@ -101,13 +142,6 @@ class SetCardView: UIView {
         case .squiggle:
             drawSquiggle()
         }
-    }
-    
-    private func drawRoundConer(_ rect: CGRect) {
-        let roundedRect = UIBezierPath(roundedRect: rect, cornerRadius: cornerRadius)
-        roundedRect.addClip()
-        #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0).setFill()
-        roundedRect.fill()
     }
     
     private func drawDimond() {
@@ -120,7 +154,6 @@ class SetCardView: UIView {
         
         drawPattern(with: path)
     }
-    
     
     private func drawOval() {
         let path = UIBezierPath(ovalIn: CGRect(origin: patternOrgin, size: CGSize(width: patternWidth, height: patternHeight)))
@@ -216,6 +249,7 @@ extension SetCardView {
         static let patternLineWidthToBoundsWidth: CGFloat = 0.015
         static let stripIntervalToBoundsWidth: CGFloat = 0.03
         static let cornerRadiusToBoundsHeight: CGFloat = 0.06
+        static let backTextFontsizeToBoundsWidth: CGFloat = 1.4
         static let cardDisappearTime: TimeInterval = 2
         static let cardDealTime: TimeInterval = 1
     }
@@ -246,6 +280,10 @@ extension SetCardView {
     
     private var stripInterval: CGFloat {
         return bounds.width * Constants.stripIntervalToBoundsWidth
+    }
+    
+    private var backFontsize: CGFloat {
+        return bounds.width * Constants.backTextFontsizeToBoundsWidth
     }
 }
 

@@ -17,7 +17,7 @@
 		EEBC8C3E1FDCD30900B0C5DA /* SetBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC8C3D1FDCD30900B0C5DA /* SetBoardView.swift */; };
 		EEBC8C401FDD20DF00B0C5DA /* SetCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC8C3F1FDD20DF00B0C5DA /* SetCardView.swift */; };
 		EEBC8C441FDE883D00B0C5DA /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBC8C431FDE883D00B0C5DA /* Grid.swift */; };
-		EEEE1CBA1FEB91170012B900 /* CardBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEE1CB91FEB91170012B900 /* CardBehavior.swift */; };
+		EEEE1CBA1FEB91170012B900 /* CardFlyawayBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEE1CB91FEB91170012B900 /* CardFlyawayBehavior.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +33,7 @@
 		EEBC8C3D1FDCD30900B0C5DA /* SetBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetBoardView.swift; sourceTree = "<group>"; };
 		EEBC8C3F1FDD20DF00B0C5DA /* SetCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetCardView.swift; sourceTree = "<group>"; };
 		EEBC8C431FDE883D00B0C5DA /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
-		EEEE1CB91FEB91170012B900 /* CardBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardBehavior.swift; sourceTree = "<group>"; };
+		EEEE1CB91FEB91170012B900 /* CardFlyawayBehavior.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFlyawayBehavior.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +72,7 @@
 				EE2795551FD2CC3A00F32A55 /* SetCard.swift */,
 				EEBC8C3D1FDCD30900B0C5DA /* SetBoardView.swift */,
 				EEBC8C3F1FDD20DF00B0C5DA /* SetCardView.swift */,
-				EEEE1CB91FEB91170012B900 /* CardBehavior.swift */,
+				EEEE1CB91FEB91170012B900 /* CardFlyawayBehavior.swift */,
 				EEBC8C431FDE883D00B0C5DA /* Grid.swift */,
 				EE27954D1FD2493200F32A55 /* Info.plist */,
 				EECC119D1FD2E3AD0077BC50 /* SupportingFiles */,
@@ -169,7 +169,7 @@
 				EE2795421FD2493200F32A55 /* AppDelegate.swift in Sources */,
 				EEBC8C441FDE883D00B0C5DA /* Grid.swift in Sources */,
 				EE2795561FD2CC3A00F32A55 /* SetCard.swift in Sources */,
-				EEEE1CBA1FEB91170012B900 /* CardBehavior.swift in Sources */,
+				EEEE1CBA1FEB91170012B900 /* CardFlyawayBehavior.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

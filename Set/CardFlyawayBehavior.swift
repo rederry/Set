@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CardBehavior: UIDynamicBehavior {
+class CardFlyawayBehavior: UIDynamicBehavior {
 
     private lazy var collisionBehavior: UICollisionBehavior = {
         let behavior = UICollisionBehavior()
@@ -18,8 +18,7 @@ class CardBehavior: UIDynamicBehavior {
     
     private lazy var itemBehavior: UIDynamicItemBehavior = {
         let behavior = UIDynamicItemBehavior()
-//        behavior.allowsRotation = false
-        behavior.elasticity = 1.0
+        behavior.elasticity = 1.3
         behavior.resistance = 0
         return behavior
     }()
@@ -47,9 +46,19 @@ class CardBehavior: UIDynamicBehavior {
         addChildBehavior(push)
     }
     
+    var snapPoint = CGPoint()
+    private func snap(_ item: UIDynamicItem) {
+        let snap = UISnapBehavior(item: item, snapTo: snapPoint)
+        addChildBehavior(snap)
+    }
+    
     func addItem(_ item: UIDynamicItem) {
         collisionBehavior.addItem(item)
         itemBehavior.addItem(item)
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { (timer) in
+            self.collisionBehavior.removeItem(item)
+            self.snap(item)
+        }
         push(item)
     }
     

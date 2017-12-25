@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UIDynamicAnimatorDelegate {
     
     var game = SetGame()
 
@@ -28,11 +28,24 @@ class ViewController: UIViewController {
         }
     }
     //UIDynamicAnimator
-    private lazy var animator = UIDynamicAnimator(referenceView: setBoardView)
-    private lazy var behavior = CardBehavior(animator)
+    private lazy var animator : UIDynamicAnimator = {
+        let animator = UIDynamicAnimator(referenceView: setBoardView)
+        animator.delegate = self
+        return animator
+    }()
     
-    private var deckFrame: CGRect {
-        return CGRect(x: dealStackView.center.x, y: dealStackView.center.y, width: setBoardView.cardViews[0].bounds.size.width, height: setBoardView.cardViews[0].bounds.size.height)
+    private lazy var behavior: CardFlyawayBehavior = {
+        let behavior = CardFlyawayBehavior(animator)
+        behavior.snapPoint = discardPileCenter
+        return behavior
+    }()
+    
+    private var deckCenter: CGPoint {
+        return CGPoint(x: dealStackView.center.x, y: dealStackView.center.y)
+    }
+    private var discardPileCenter: CGPoint {
+        let cc = player1Button.convert(player1Button.center, to: setBoardView)
+        return CGPoint(x: cc.x, y: cc.y)
     }
 
     @IBAction func player1TouchSet(_ sender: UIButton) {
@@ -46,7 +59,7 @@ class ViewController: UIViewController {
     
     @IBAction private func resetGame(_ sender: UIButton) {
         game.resetGame()
-        setBoardView.cardViews.forEach { $0.alpha = 0 }
+        setBoardView.resetCards()
         updateViewFromModel()
     }
     
@@ -117,19 +130,7 @@ class ViewController: UIViewController {
         if let matched = game.is3SelectedCardsMatched, matched {
             deal3Cards()
         } else {
-            // Rearrange first
-            // - MARK: Placeholder for deal a card animation
-            setBoardView.setNeedsLayout()
-            for cardView in setBoardView.cardViews {
-                if cardView.alpha == 0 {
-                    let currentFrame = cardView.frame
-                    cardView.frame = self.deckFrame
-                    cardView.alpha = 1
-                    UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 1, delay: 0.5, options: [], animations: {
-                        cardView.frame = currentFrame
-                    }, completion: nil)
-                }
-            }
+            setBoardView.animateDealCard(from: deckCenter)
         }
         
         // Update Score Label
@@ -159,15 +160,36 @@ class ViewController: UIViewController {
         }
     }
     
+    private var tmpCards = [SetCardView]()
     private func configCardViewState(_ cardView: SetCardView, _ card: SetCard) {
         if game.selectedCards.contains(card) {
             cardView.isSelected = true
             cardView.isMatched = game.is3SelectedCardsMatched
+            if let matched = game.is3SelectedCardsMatched, matched {
+                //- MARK: flyaway animation
+                let tmpCard = cardView.copyCard()
+                tmpCards.append(tmpCard)
+                setBoardView.addSubview(tmpCard)
+                behavior.addItem(tmpCard)
+                cardView.alpha = 0
+            }
         } else {
             cardView.isSelected = false
             cardView.isMatched = nil
         }
         cardView.configState()
+    }
+    
+    func dynamicAnimatorDidPause(_ animator: UIDynamicAnimator) {
+        tmpCards.forEach { (tmpCard) in
+            UIView.transition(with: tmpCard, duration: 0.5, options: [.transitionFlipFromLeft], animations: {
+                tmpCard.isFaceup = false
+            }, completion: { (isComplete) in
+                self.behavior.remove(tmpCard)
+                tmpCard.removeFromSuperview()
+            })
+        }
+        print("dynamicAnimatorDidPause")
     }
     
     private func createCardView() -> SetCardView {
