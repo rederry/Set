@@ -12,7 +12,7 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
     
     var game = SetGame()
 
-    @IBOutlet weak var dealStackView: UIStackView!
+    @IBOutlet weak var deckView: UIButton!
     @IBOutlet weak var player1Button: UIButton!
     @IBOutlet weak var player2Button: UIButton!
     @IBOutlet private weak var dealButton: UIButton!
@@ -25,6 +25,7 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
             
             let rotate = UIRotationGestureRecognizer(target: self, action: #selector(reshuffle))
             setBoardView.addGestureRecognizer(rotate)
+            setBoardView.deckCenter = deckCenter
         }
     }
     //UIDynamicAnimator
@@ -41,11 +42,12 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
     }()
     
     private var deckCenter: CGPoint {
-        return CGPoint(x: dealStackView.center.x, y: dealStackView.center.y)
+        return CGPoint(x: deckView.center.x, y: deckView.center.y)
     }
     private var discardPileCenter: CGPoint {
-        let cc = player1Button.convert(player1Button.center, to: setBoardView)
-        return CGPoint(x: cc.x, y: cc.y)
+//        let cc = player1Button.convert(player1Button.center, to: view)
+//        return CGPoint(x: cc.x, y: cc.y)
+        return deckCenter
     }
 
     @IBAction func player1TouchSet(_ sender: UIButton) {
@@ -127,10 +129,9 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
             setBoardView.cardViews.removeLast().removeFromSuperview()
         }
         
+        // - TODO: Fix deal card animation
         if let matched = game.is3SelectedCardsMatched, matched {
             deal3Cards()
-        } else {
-            setBoardView.animateDealCard(from: deckCenter)
         }
         
         // Update Score Label
@@ -166,7 +167,7 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
             cardView.isSelected = true
             cardView.isMatched = game.is3SelectedCardsMatched
             if let matched = game.is3SelectedCardsMatched, matched {
-                //- MARK: flyaway animation
+                //- MARK: Flyaway animation
                 let tmpCard = cardView.copyCard()
                 tmpCards.append(tmpCard)
                 setBoardView.addSubview(tmpCard)
@@ -189,7 +190,6 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
                 tmpCard.removeFromSuperview()
             })
         }
-        print("dynamicAnimatorDidPause")
     }
     
     private func createCardView() -> SetCardView {

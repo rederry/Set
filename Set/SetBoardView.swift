@@ -17,47 +17,12 @@ class SetBoardView: UIView {
         layoutSetCards()
     }
     
-    func animateDealCard(from point: CGPoint) {
-//        isAnimateDealCard = true
-        deckCenter = point
-    }
-    
-    private var deckCenter = CGPoint.zero
-//    private var isAnimateDealCard = false
+    var deckCenter = CGPoint.zero
     
     func resetCards() {
         cardViews.forEach { $0.alpha = 0 }
         layoutSetCards()
     }
-    
-//    func updateCardViews() {
-//        for index in 0..<game.playingCards.count {
-//            let card = game.playingCards[index]
-//            
-//            if index >= setBoardView.cardViews.count {
-//                let cardView = createCardView()
-//                updateCardView(cardView, for: card)
-//                setBoardView.cardViews.append(cardView)
-//                setBoardView.addSubview(cardView)
-//            } else {
-//                let cardView = setBoardView.cardViews[index]
-//                updateCardView(cardView, for: card)
-//                configCardViewState(cardView, card)
-//            }
-//        }
-//        
-//        // Remove off board card view
-//        for _ in game.playingCards.count..<setBoardView.cardViews.count {
-//            setBoardView.cardViews.removeLast().removeFromSuperview()
-//        }
-//        
-//        if let matched = game.is3SelectedCardsMatched, matched {
-//            deal3Cards()
-//        } else {
-//            setBoardView.animateDealCard(from: deckCenter)
-//        }
-//    }
-
     
     private func layoutSetCards() {
         var grid = Grid(layout: .aspectRatio(Constant.cellAspectRatio), frame: bounds)
