@@ -35,11 +35,20 @@ class SetCardView: UIView {
     convenience init(_ behavior: CardFlyawayBehavior) {
         self.init(frame: CGRect.zero)
         self.behavior = behavior
+        alpha = 0
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
         setup()
     }
     
     private func setup() {
-        alpha = 0
         backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
         isOpaque = false
     }
@@ -49,14 +58,14 @@ class SetCardView: UIView {
         layer.cornerRadius = cornerRadius
         layer.borderWidth = patternLineWidth*2
         layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-        isUserInteractionEnabled = true
+//        isUserInteractionEnabled = true
 
         if isSelected { // highlight selected card view
             layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
             if let matched = isMatched { // Already selected 3 cards
                 if matched {
                     layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
-                    isUserInteractionEnabled = false
+//                    isUserInteractionEnabled = false
                     
                     //- MARK: flyaway animation
 //                    let tmpCard = copyCard()
@@ -92,23 +101,21 @@ class SetCardView: UIView {
         copy.bounds = bounds
         copy.frame = frame
         copy.alpha = 1
-        copy.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0)
         return copy
     }
     
     func animateDeal(from deckCenter: CGPoint) {
-//        print("Before--Frame: \(frame), Center: \(center)")
         let currentCenter = center
         center = deckCenter
+//        print("cardCenter: \(deckCenter)")
         alpha = 1
         isFaceup = false
-//        print("After--Frame1: \(frame), Center: \(center)")
-        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 1, delay: 0.5, options: [], animations: {
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 1, delay: 0.3, options: [], animations: {
             self.center = currentCenter
         }, completion: { position in
             UIView.transition(with: self, duration: 0.5, options: [.transitionFlipFromLeft], animations: {
                 self.isFaceup = true
-            }, completion: nil)
+            })
         })
     }
     

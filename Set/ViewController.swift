@@ -12,10 +12,10 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
     
     var game = SetGame()
 
-    @IBOutlet weak var deckView: UIButton!
-    @IBOutlet weak var player1Button: UIButton!
-    @IBOutlet weak var player2Button: UIButton!
+    @IBOutlet private weak var player1Button: UIButton!
+    @IBOutlet private weak var player2Button: UIButton!
     @IBOutlet private weak var dealButton: UIButton!
+    @IBOutlet private weak var deckStackView: UIStackView!
     @IBOutlet private weak var scoreLabel: UILabel!
     @IBOutlet private weak var setBoardView: SetBoardView! {
         didSet {
@@ -25,7 +25,6 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
             
             let rotate = UIRotationGestureRecognizer(target: self, action: #selector(reshuffle))
             setBoardView.addGestureRecognizer(rotate)
-            setBoardView.deckCenter = deckCenter
         }
     }
     //UIDynamicAnimator
@@ -42,11 +41,19 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
     }()
     
     private var deckCenter: CGPoint {
-        return CGPoint(x: deckView.center.x, y: deckView.center.y)
+        let ct = deckStackView.center
+//        print("deckStackView center: \(deckStackView.center)")
+        let centerOnBoard = view.convert(ct, to: setBoardView)
+        setBoardView.deckCenter = centerOnBoard
+//        print("centerOnBoard: \(deckStackView.center)")
+        
+//        let deckView = SetCardView()
+//        deckView.frame = CGRect(x: ct.x-35, y: ct.y-50, width: 70, height: 100)
+//        view.addSubview(deckView)
+//        print("deckView center: \(deckView.center)")
+        return centerOnBoard
     }
     private var discardPileCenter: CGPoint {
-//        let cc = player1Button.convert(player1Button.center, to: view)
-//        return CGPoint(x: cc.x, y: cc.y)
         return deckCenter
     }
 
@@ -104,8 +111,6 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
         super.viewDidLoad()
         updateViewFromModel()
         NotificationCenter.default.addObserver(self, selector: #selector(updateViewFromModel), name: NSNotification.Name(rawValue: game.playerTurnDidFinishNotification), object: nil)
-//        print("x: \(dealButton.frame.maxX), y: \(dealButton.frame.maxY),")
-//        print("x: \(dealStackView.frame.maxX), y: \(dealStackView.frame.maxY),")
     }
     
     @objc func updateViewFromModel() {
@@ -143,17 +148,17 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
         if let _ = game.currentPlayer {
             player1Button.isEnabled = false
             player2Button.isEnabled = false
-            player1Button.setTitleColor(#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1), for: .normal)
-            player2Button.setTitleColor(#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1), for: .normal)
+            player1Button.setTitleColor(#colorLiteral(red: 0.6666666865, green: 0.6666666865, blue: 0.6666666865, alpha: 1), for: .normal)
+            player2Button.setTitleColor(#colorLiteral(red: 0.6666666865, green: 0.6666666865, blue: 0.6666666865, alpha: 1), for: .normal)
         } else {
             player1Button.isEnabled = true
             player2Button.isEnabled = true
-            player1Button.setTitleColor(#colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1), for: .normal)
-            player2Button.setTitleColor(#colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1), for: .normal)
+            player1Button.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
+            player2Button.setTitleColor(#colorLiteral(red: 0, green: 0, blue: 0, alpha: 1), for: .normal)
         }
         
         if game.deckOfCards.isEmpty {
-            dealButton.setTitleColor(#colorLiteral(red: 0.4620226622, green: 0.8382837176, blue: 1, alpha: 1), for: .normal)
+            dealButton.setTitleColor(#colorLiteral(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
             dealButton.isEnabled = false
         } else {
             dealButton.setTitleColor(#colorLiteral(red: 0, green: 0.3285208941, blue: 0.5748849511, alpha: 1), for: .normal)
@@ -243,11 +248,11 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
             cardView.grain = grain
         }
         
-//        if let _ = game.currentPlayer { // have a player
-//            cardView.isUserInteractionEnabled = true
-//        } else {
-//            cardView.isUserInteractionEnabled = false
-//        }
+        if let _ = game.currentPlayer { // have a player
+            cardView.isUserInteractionEnabled = true
+        } else {
+            cardView.isUserInteractionEnabled = false
+        }
     }
     
 }

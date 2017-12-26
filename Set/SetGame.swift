@@ -49,7 +49,7 @@ class SetGame {
     /// - Requires: player != nil
     func setTurn(for player: Player) {
         currentPlayer = player
-        Timer.scheduledTimer(withTimeInterval: 5, repeats: false) { (timer) in
+        Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { (timer) in
             self.currentPlayer = nil
             if let matched = self.is3SelectedCardsMatched, matched{
             } else {

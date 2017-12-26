@@ -27,9 +27,9 @@ class SetBoardView: UIView {
     private func layoutSetCards() {
         var grid = Grid(layout: .aspectRatio(Constant.cellAspectRatio), frame: bounds)
         grid.cellCount = cardViews.count
-        let cellPadding = Constant.cellPadding
         for index in 0..<grid.cellCount {
             if let frame = grid[index] {
+                let cellPadding = Constant.cellPaddingToBoundsWidth * frame.width
                 let cardFrame = CGRect(x: frame.origin.x, y: frame.origin.y,
                                        width: frame.width - cellPadding,
                                        height: frame.height - cellPadding)
@@ -49,6 +49,6 @@ class SetBoardView: UIView {
 extension SetBoardView {
     struct Constant {
         static let cellAspectRatio: CGFloat = 0.7
-        static let cellPadding: CGFloat  = 5
+        static let cellPaddingToBoundsWidth: CGFloat  = 1/20
     }
 }
