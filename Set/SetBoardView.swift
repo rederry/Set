@@ -36,11 +36,12 @@ class SetBoardView: UIView {
                 let setCardView = cardViews[index]
                 UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 0.3, delay: 0, options: [.curveEaseInOut], animations: {
                     setCardView.frame = cardFrame
-                }, completion: { position in
-                    if setCardView.alpha == 0{
-                        setCardView.animateDeal(from: self.deckCenter)
-                    }
                 })
+//                    , completion: { position in
+//                    if setCardView.alpha == 0{
+//                        setCardView.animateDeal(from: self.deckCenter)
+//                    }
+//                })
             }
         }
     }

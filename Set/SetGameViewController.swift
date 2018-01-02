@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIDynamicAnimatorDelegate {
+class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
     
     var game = SetGame()
 
@@ -42,15 +42,8 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
     
     private var deckCenter: CGPoint {
         let ct = deckStackView.center
-//        print("deckStackView center: \(deckStackView.center)")
         let centerOnBoard = view.convert(ct, to: setBoardView)
         setBoardView.deckCenter = centerOnBoard
-//        print("centerOnBoard: \(deckStackView.center)")
-        
-//        let deckView = SetCardView()
-//        deckView.frame = CGRect(x: ct.x-35, y: ct.y-50, width: 70, height: 100)
-//        view.addSubview(deckView)
-//        print("deckView center: \(deckView.center)")
         return centerOnBoard
     }
     private var discardPileCenter: CGPoint {
@@ -114,15 +107,15 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
     }
     
     @objc func updateViewFromModel() {
-        for index in 0..<game.playingCards.count {
+        for index in game.playingCards.indices {
             let card = game.playingCards[index]
 
-            if index >= setBoardView.cardViews.count {
+            if index >= setBoardView.cardViews.count { // Create new cards
                 let cardView = createCardView()
                 updateCardView(cardView, for: card)
                 setBoardView.cardViews.append(cardView)
                 setBoardView.addSubview(cardView)
-            } else {
+            } else { // Replace old cards
                 let cardView = setBoardView.cardViews[index]
                 updateCardView(cardView, for: card)
                 configCardViewState(cardView, card)
@@ -130,11 +123,22 @@ class ViewController: UIViewController, UIDynamicAnimatorDelegate {
         }
         
         // Remove off board card view
-        for _ in game.playingCards.count..<setBoardView.cardViews.count {            
+        for _ in game.playingCards.count..<setBoardView.cardViews.count {
             setBoardView.cardViews.removeLast().removeFromSuperview()
         }
         
-        // - TODO: Fix deal card animation
+        var numberOfCardsDealed = 0
+        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { (timer) in
+            for cardView in self.setBoardView.cardViews {
+                if (cardView.alpha == 0) {
+                    cardView.animateDeal(from: self.deckCenter, delay: TimeInterval(numberOfCardsDealed) * 0.25)
+                    numberOfCardsDealed += 1
+                }
+            }
+        }
+
+        
+        // TODO: Fix deal card animation
         if let matched = game.is3SelectedCardsMatched, matched {
             deal3Cards()
         }

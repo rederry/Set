@@ -104,13 +104,13 @@ class SetCardView: UIView {
         return copy
     }
     
-    func animateDeal(from deckCenter: CGPoint) {
+    // MARK: Deal a card animation
+    func animateDeal(from deckCenter: CGPoint, delay: TimeInterval) {
         let currentCenter = center
         center = deckCenter
-//        print("cardCenter: \(deckCenter)")
         alpha = 1
         isFaceup = false
-        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 1, delay: 0.3, options: [], animations: {
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: 1, delay: delay, options: [], animations: {
             self.center = currentCenter
         }, completion: { position in
             UIView.transition(with: self, duration: 0.5, options: [.transitionFlipFromLeft], animations: {
