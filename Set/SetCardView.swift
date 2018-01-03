@@ -58,30 +58,11 @@ class SetCardView: UIView {
         layer.cornerRadius = cornerRadius
         layer.borderWidth = patternLineWidth*2
         layer.borderColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0).cgColor
-//        isUserInteractionEnabled = true
-
         if isSelected { // highlight selected card view
             layer.borderColor = #colorLiteral(red: 0.01680417731, green: 0.1983509958, blue: 1, alpha: 1).cgColor
             if let matched = isMatched { // Already selected 3 cards
                 if matched {
                     layer.borderColor = #colorLiteral(red: 0, green: 0.9768045545, blue: 0, alpha: 1).cgColor
-//                    isUserInteractionEnabled = false
-                    
-                    //- MARK: flyaway animation
-//                    let tmpCard = copyCard()
-//                    self.superview!.addSubview(tmpCard)
-//                    self.behavior?.addItem(tmpCard)
-//                    self.alpha = 0
-
-//                    Timer.scheduledTimer(withTimeInterval: Constants.cardDisappearTime, repeats: false, block: { (timer) in
-//                        UIView.transition(with: tmpCard, duration: 1, options: [.transitionFlipFromLeft], animations: {
-//                            tmpCard.isFaceup = false
-//                        }, completion: { (isComplete) in
-//                            self.behavior?.remove(tmpCard)
-//                            tmpCard.removeFromSuperview()
-//                        })
-//                    })
-                    
                 } else {
                     layer.borderColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1).cgColor
                 }

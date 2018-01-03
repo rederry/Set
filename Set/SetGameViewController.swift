@@ -127,6 +127,7 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
             setBoardView.cardViews.removeLast().removeFromSuperview()
         }
         
+        // Deal card animation
         var numberOfCardsDealed = 0
         Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { (timer) in
             for cardView in self.setBoardView.cardViews {
@@ -137,10 +138,22 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
             }
         }
 
-        
-        // TODO: Fix deal card animation
-        if let matched = game.is3SelectedCardsMatched, matched {
-            deal3Cards()
+        if let matched = game.is3SelectedCardsMatched, matched { // Replace or remove matched cards
+            if game.deckOfCards.isEmpty {
+                game.deal3Cards()
+                for index in game.playingCards.indices {
+                    let card = game.playingCards[index]
+                    let cardView = setBoardView.cardViews[index]
+                    cardView.alpha = 1
+                    updateCardView(cardView, for: card)
+                    configCardViewState(cardView, card)
+                }
+                for _ in game.playingCards.count..<setBoardView.cardViews.count {
+                    setBoardView.cardViews.removeLast().removeFromSuperview()
+                }
+            } else {
+                deal3Cards()
+            }
         }
         
         // Update Score Label

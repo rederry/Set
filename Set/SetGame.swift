@@ -226,9 +226,9 @@ class SetGame {
         for _ in 0..<Constant.initPlayingCardsCount {
             playingCards.append(draw())
         }
-        for _ in 0..<57 {
-            deckOfCards.remove(at: 0)
-        }
+//        for _ in 0..<57 {
+//            deckOfCards.remove(at: 0)
+//        }
     }
 }
 
