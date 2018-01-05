@@ -25,9 +25,9 @@ class CardFlyawayBehavior: UIDynamicBehavior {
     
     private func push(_ item: UIDynamicItem) {
         let push = UIPushBehavior(items: [item], mode: .instantaneous)
-        push.magnitude = 4
         push.angle = (2*CGFloat.pi).arc4random
         if let referenceBounds = dynamicAnimator?.referenceView?.bounds {
+            push.magnitude = referenceBounds.width * 4/375
             let center = CGPoint(x: referenceBounds.midX, y: referenceBounds.midY)
             push.angle = (CGFloat.pi/2).arc4random
             switch (item.center.x, item.center.y) {
