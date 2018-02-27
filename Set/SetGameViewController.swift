@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
+class SetGameViewController: VCLLoggingViewController, UIDynamicAnimatorDelegate {
     
     var game = SetGame()
 
@@ -36,9 +36,13 @@ class SetGameViewController: UIViewController, UIDynamicAnimatorDelegate {
     
     private lazy var behavior: CardFlyawayBehavior = {
         let behavior = CardFlyawayBehavior(animator)
-        behavior.snapPoint = discardPileCenter
         return behavior
     }()
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        behavior.snapPoint = discardPileCenter
+    }
     
     private var deckCenter: CGPoint {
         let ct = deckStackView.center
